@@ -40,6 +40,8 @@ export default function Ticket() {
   return (
     <div className="min-h-screen flex flex-col justify-between bg-slate">
       <div className="container py-6">
+        {/* If you want to show a ticket image, use the correct relative path */}
+        {/* <img src="./ticket.png" alt="Ticket" className="w-12 h-12 mb-4 mx-auto" /> */}
         <Card className="max-w-xl mx-auto bg-matte border-matte text-silver">
           <div className="flex flex-col gap-2 mb-4">
             <h2 className="text-2xl font-bold text-yellow tracking-wide">{movie.title}</h2>

@@ -44,7 +44,7 @@ export default function Home() {
           </div>
           {/* Right: Illustration image */}
           <div className="flex-1 flex items-center justify-center">
-            <img src="/projector tape.jpeg" alt="Projector Tape" className="w-full max-w-lg h-auto rounded-xl shadow-xl bg-matte object-cover object-center" style={{aspectRatio:'4/3'}} />
+            <img src="./projector tape.jpeg" alt="Projector Tape" className="w-full max-w-lg h-auto rounded-xl shadow-xl bg-matte object-cover object-center" style={{aspectRatio:'4/3'}} />
           </div>
         </main>
       )}

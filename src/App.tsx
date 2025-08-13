@@ -21,7 +21,7 @@ function LoaderWrapper({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   useEffect(() => {
     setLoading(true)
-    const timeout = setTimeout(() => setLoading(false), 600) // Simulate 600ms load
+    const timeout = setTimeout(() => setLoading(false), 2000) // Simulate 2s load for better visibility
     return () => clearTimeout(timeout)
   }, [location])
   return (

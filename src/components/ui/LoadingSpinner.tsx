@@ -5,7 +5,7 @@ export default function LoadingSpinner({ className = '' }: { className?: string 
   return (
     <div className={`flex flex-col items-center justify-center ${className}`}>
       <img
-        src="/loading-flaticon.svg"
+        src="./loading-flaticon.svg"
         alt="Loading..."
         className="w-16 h-16 animate-spin"
         style={{ animationDuration: '1s', animationTimingFunction: 'linear', animationIterationCount: 'infinite' }}

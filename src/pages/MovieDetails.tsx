@@ -6,13 +6,13 @@ import { movies } from '../data/movies'
 import { shows, theatres } from '../data/theaters'
 import TheatreCard from '../components/TheatreCard'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
-
+import { useLoading } from '../App'
 
 export default function MovieDetails() {
   // Get movie ID from URL
   const { id } = useParams()
-  // Loading state for async fetch simulation
-  const [loading, setLoading] = useState(true)
+  // Use global loading context
+  const { loading, setLoading } = useLoading()
   // State for movie details
   const [movie, setMovie] = useState<any>(null)
   // State for shows for this movie and date

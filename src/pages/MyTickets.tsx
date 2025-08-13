@@ -7,7 +7,7 @@ import { movies } from '../data/movies'
 
 // Ticket icon component
 const TicketIcon = () => (
-  <img src="/ticket.png" alt="Ticket" className="w-6 h-6 inline-block mr-1 align-text-bottom" />
+  <img src="./ticket.png" alt="Ticket" className="w-6 h-6 inline-block mr-1 align-text-bottom" />
 )
 
 export default function MyTickets() {

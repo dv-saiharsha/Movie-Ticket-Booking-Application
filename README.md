@@ -1,4 +1,3 @@
-
 # CineBook (React + Vite + Tailwind + shadcn-style UI)
 
 A modern, responsive web app for booking movie tickets online. Features user authentication, movie discovery, showtime and seat selection, ticket management, offers, and a beautiful UI. Built with React, Vite, and Tailwind CSS.
