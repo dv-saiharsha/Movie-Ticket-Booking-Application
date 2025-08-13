@@ -40,13 +40,14 @@ export default function Ticket() {
   return (
     <div className="min-h-screen flex flex-col justify-between bg-slate">
       <div className="container py-6">
-        {/* If you want to show a ticket image, use the correct relative path */}
-        {/* <img src="./ticket.png" alt="Ticket" className="w-12 h-12 mb-4 mx-auto" /> */}
-        <Card className="max-w-xl mx-auto bg-matte border-matte text-silver">
+        <Card className="max-w-xl mx-auto bg-matte border-matte text-silver p-6">
           <div className="flex flex-col gap-2 mb-4">
-            <h2 className="text-2xl font-bold text-yellow tracking-wide">{movie.title}</h2>
-            <div className="flex flex-wrap gap-2 items-center">
-              <span className="text-yellow font-semibold text-lg">{theatre.name}</span>
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-yellow tracking-wide">{movie.title}</h2>
+              <span className="text-xs text-silver/70 font-mono">#{booking.id.slice(0, 8).toUpperCase()}</span>
+            </div>
+            <div className="flex flex-wrap gap-2 items-center text-base">
+              <span className="text-yellow font-semibold">{theatre.name}</span>
               <span className="text-silver flex items-center gap-1">
                 • {new Date(show.time).toLocaleString()} •
                 {show.speciality === 'Dolby Atmos' && <SiDolby className="text-silver text-base" title="Dolby Atmos" />}
@@ -55,21 +56,46 @@ export default function Ticket() {
               </span>
             </div>
           </div>
-          <div className="mt-4 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex-1">
-              {/* Show seat numbers */}
-              <div className="mb-2">
-                <span className="text-sm text-silver">Seats</span>
-                <div className="font-semibold text-lg text-yellow">{booking.seats.join(', ')}</div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center mt-4">
+            {/* Ticket details */}
+            <div className="col-span-2 flex flex-col gap-2">
+              <div className="flex gap-4">
+                <div>
+                  <span className="text-xs text-silver">Seats</span>
+                  <div className="font-semibold text-lg text-yellow">{booking.seats.join(', ')}</div>
+                </div>
+                <div>
+                  <span className="text-xs text-silver">Count</span>
+                  <div className="font-semibold text-lg text-yellow">{booking.seats.length}</div>
+                </div>
               </div>
-              {/* Show theatre location */}
-              <div className="mb-2">
-                <span className="text-sm text-silver">Location</span>
+              <div>
+                <span className="text-xs text-silver">Location</span>
                 <div className="text-silver font-semibold">{theatre.location.state}{theatre.location.district?', '+theatre.location.district:''}{theatre.location.village?', '+theatre.location.village:''}</div>
               </div>
-              {/* Show QR code */}
-              <div className="mt-4">
-                <QRCodeSVG value={JSON.stringify(booking)} size={96} />
+              <div>
+                <span className="text-xs text-silver">Show Date & Time</span>
+                <div className="text-silver font-semibold">{new Date(show.time).toLocaleString()}</div>
+              </div>
+              <div>
+                <span className="text-xs text-silver">Total Paid</span>
+                <div className="font-semibold text-lg text-yellow">₹{booking.amount}</div>
+              </div>
+            </div>
+            {/* QR code in yellow, no extra box */}
+            <div className="flex items-center justify-center">
+              <div className="flex flex-col items-center">
+                <QRCodeSVG
+                  value={JSON.stringify(booking)}
+                  size={120}
+                  fgColor="#facc15"
+                  bgColor="transparent"
+                  level="Q"
+                  style={{ display: 'block' }}
+                />
+                <span className="mt-3 text-xs md:text-sm text-silver/80 font-medium tracking-wide text-center italic">
+                  Show this QR code at entry for verification
+                </span>
               </div>
             </div>
           </div>

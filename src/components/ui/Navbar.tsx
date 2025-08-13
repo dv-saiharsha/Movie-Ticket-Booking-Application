@@ -31,13 +31,9 @@ export default function Navbar() {
     localStorage.setItem('theme', theme)
   }, [theme])
 
-  // Early return if not logged in
-  if (!user) return null
-
   // Load all places for location select
   useEffect(() => {
     loadIndiaLocations().then((locs: LocationNode[]) => {
-      // Flatten all villages/cities (just names, no district/state)
       const places: string[] = []
       locs.forEach((state) => {
         state.children?.forEach((district) => {
@@ -60,7 +56,7 @@ export default function Navbar() {
     }
   }
 
-  const firstName = user.name?.split(' ')[0] || 'Profile'
+  const firstName = user?.name?.split(' ')[0] || 'Profile'
 
   return (
     <header className="sticky top-0 z-40 bg-matte border-b border-matte shadow-sm">
@@ -85,7 +81,7 @@ export default function Navbar() {
           </div>
           {/* Theme toggle icon button */}
           <button
-            className="ml-4 p-2 rounded-full border border-yellow bg-matte text-yellow hover:bg-yellow hover:text-matte transition"
+            className="ml-4 p-2 rounded-full border border-yellow bg-matte text-yellow hover:bg-yellow hover:text-matte transition-all duration-150 ease-in-out will-change-transform"
             aria-label="Toggle theme"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           >
@@ -93,33 +89,42 @@ export default function Navbar() {
           </button>
         </div>
         <nav className="flex items-center gap-6 text-sm">
-          <Link to="/my-tickets" className="hover:text-yellow flex items-center gap-1"><Ticket className="h-4 w-4 text-yellow" />My Tickets</Link>
-          <div className="relative">
-            <button
-              className="flex items-center gap-2 px-3 py-1 rounded-full bg-yellow text-matte font-semibold hover:bg-matte hover:text-yellow transition border-2 border-yellow"
-              onClick={() => setProfileOpen(v => !v)}
-            >
-              <User className="h-5 w-5 text-matte group-hover:text-yellow transition" />
-              <span className="transition">{firstName}</span>
-            </button>
-            {profileOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-matte border border-matte rounded shadow-lg z-50">
-                <Link
-                  to="/offers"
-                  className="block px-4 py-2 text-silver hover:bg-yellow/10 transition"
-                  onClick={() => setProfileOpen(false)}
-                >
-                  <Percent className="inline h-4 w-4 mr-1 text-yellow" /> Offers
-                </Link>
+          {user ? (
+            <>
+              <Link to="/my-tickets" className="hover:text-yellow flex items-center gap-1"><Ticket className="h-4 w-4 text-yellow" />My Tickets</Link>
+              <div className="relative">
                 <button
-                  className="w-full text-left px-4 py-2 text-silver hover:bg-yellow/10 flex items-center gap-2 transition"
-                  onClick={() => { setUser(null); nav('/sign-in') }}
+                  className="flex items-center gap-2 px-3 py-1 rounded-full bg-yellow text-matte font-semibold hover:bg-matte hover:text-yellow transition border-2 border-yellow"
+                  onClick={() => setProfileOpen(v => !v)}
                 >
-                  <LogOut className="h-4 w-4 text-yellow" /> Logout
+                  <User className="h-5 w-5 text-matte group-hover:text-yellow transition" />
+                  <span className="transition">{firstName}</span>
                 </button>
+                {profileOpen && (
+                  <div className="absolute right-0 mt-2 w-40 bg-matte border border-matte rounded shadow-lg z-50">
+                    <Link
+                      to="/offers"
+                      className="block px-4 py-2 text-silver hover:bg-yellow/10 transition"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      <Percent className="inline h-4 w-4 mr-1 text-yellow" /> Offers
+                    </Link>
+                    <button
+                      className="w-full text-left px-4 py-2 text-silver hover:bg-yellow/10 flex items-center gap-2 transition"
+                      onClick={() => { setUser(null); nav('/home') }}
+                    >
+                      <LogOut className="h-4 w-4 text-yellow" /> Logout
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </>
+          ) : (
+            <>
+              <Link to="/signin" className="px-4 py-2 rounded-2xl border border-yellow text-yellow font-semibold hover:bg-yellow hover:text-matte transition-all duration-150 ease-in-out">Sign In</Link>
+              <Link to="/signup" className="px-4 py-2 rounded-2xl border border-yellow text-yellow font-semibold hover:bg-yellow hover:text-matte transition-all duration-150 ease-in-out">Sign Up</Link>
+            </>
+          )}
         </nav>
       </div>
     </header>

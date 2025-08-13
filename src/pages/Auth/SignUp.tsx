@@ -1,5 +1,6 @@
 
 // SignUp page: Handles user registration and location selection
+
 import { useState, useEffect } from 'react'
 import Card from '../../components/ui/Card'
 import Label from '../../components/ui/Label'
@@ -8,8 +9,6 @@ import Button from '../../components/ui/Button'
 import { Link, useNavigate } from 'react-router-dom'
 import { signUp, useAuthStore, saveUserLocation } from '../../lib/storage'
 import { loadIndiaLocations, LocationNode } from '../../lib/indiaLocations'
-
-
 export default function SignUp() {
   const nav = useNavigate() // Navigation hook
   const { setUser } = useAuthStore() // Auth state

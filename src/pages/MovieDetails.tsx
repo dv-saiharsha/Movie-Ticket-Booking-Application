@@ -69,7 +69,7 @@ export default function MovieDetails() {
           return (
             <button
               key={iso}
-              className={`flex flex-col items-center px-4 py-2 rounded-2xl border-2 transition min-w-[70px] ${isSelected ? 'bg-yellow text-matte border-yellow font-bold' : 'bg-matte text-silver border-matte hover:bg-yellow/20'}`}
+              className={`flex flex-col items-center px-4 py-2 rounded-2xl border-2 transition-all duration-150 ease-in-out min-w-[70px] ${isSelected ? 'bg-yellow text-matte border-yellow font-bold' : 'bg-matte text-silver border-matte hover:bg-yellow/20'}`}
               onClick={() => setSelectedDate(iso)}
             >
               <span className="text-lg">{d.toLocaleString('default', { month: 'short' })}</span>

@@ -20,7 +20,7 @@ export default function Offers() {
             <div className="text-xs text-black/80">Use code: {o.code}</div>
             {/* Button to copy coupon code to clipboard */}
             <button
-              className="mt-2 px-3 py-1 rounded-full bg-orange text-white font-semibold shadow hover:bg-orange/80 transition opacity-0 group-hover:opacity-100"
+              className="mt-2 px-3 py-1 rounded-full bg-orange text-white font-semibold shadow hover:bg-orange/80 transition-all duration-150 ease-in-out opacity-0 group-hover:opacity-100"
               onClick={()=>navigator.clipboard.writeText(o.code)}
             >
               Apply Coupon

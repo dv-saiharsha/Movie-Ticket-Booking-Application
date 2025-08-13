@@ -28,7 +28,7 @@ export default function Home() {
             <div className="flex gap-4 mb-10">
               {/* Scroll to now showing section */}
               <button
-                className="px-8 py-3 rounded-lg bg-yellow text-slate font-bold text-lg shadow hover:bg-yellow/80 transition"
+                className="px-8 py-3 rounded-lg bg-yellow text-slate font-bold text-lg shadow hover:bg-yellow/80 transition-all duration-150 ease-in-out"
                 onClick={() => {
                   nowShowingRef.current?.scrollIntoView({ behavior: 'smooth' })
                 }}
@@ -36,7 +36,7 @@ export default function Home() {
                 Book Now
               </button>
               {/* How it works button (no action) */}
-              <button className="px-8 py-3 rounded-lg border-2 border-silver text-silver font-bold text-lg bg-matte hover:bg-matte/80 transition flex items-center gap-2">
+              <button className="px-8 py-3 rounded-lg border-2 border-silver text-silver font-bold text-lg bg-matte hover:bg-matte/80 transition-all duration-150 ease-in-out flex items-center gap-2">
                 <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21 5,3" /></svg>
                 How it works
               </button>
@@ -44,7 +44,7 @@ export default function Home() {
           </div>
           {/* Right: Illustration image */}
           <div className="flex-1 flex items-center justify-center">
-            <img src="./projector tape.jpeg" alt="Projector Tape" className="w-full max-w-lg h-auto rounded-xl shadow-xl bg-matte object-cover object-center" style={{aspectRatio:'4/3'}} />
+            <img src="/projector tape.jpeg" alt="Projector Tape" className="w-full max-w-lg h-auto rounded-xl shadow-xl bg-matte object-cover object-center" style={{aspectRatio:'4/3'}} />
           </div>
         </main>
       )}

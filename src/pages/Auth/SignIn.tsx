@@ -1,5 +1,6 @@
 
 // SignIn page: Handles user login
+
 import { useEffect, useState } from 'react'
 import Card from '../../components/ui/Card'
 import Label from '../../components/ui/Label'
@@ -7,8 +8,6 @@ import Input from '../../components/ui/Input'
 import Button from '../../components/ui/Button'
 import { Link, useNavigate } from 'react-router-dom'
 import { signIn, useAuthStore } from '../../lib/storage'
-
-
 export default function SignIn() {
   const nav = useNavigate() // Navigation hook
   const { user, setUser } = useAuthStore() // Auth state

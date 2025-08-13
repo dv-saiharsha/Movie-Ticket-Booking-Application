@@ -160,7 +160,7 @@ function Checkout() {
               ].map(opt => (
                 <button
                   key={opt.value}
-                  className={`px-4 py-2 rounded-2xl border border-yellow font-semibold transition ${method===opt.value ? 'bg-yellow text-matte' : 'bg-matte text-silver'}`}
+                  className={`px-4 py-2 rounded-2xl border border-yellow font-semibold transition-all duration-150 ease-in-out ${method===opt.value ? 'bg-yellow text-matte' : 'bg-matte text-silver'}`}
                   onClick={()=>setMethod(opt.value)}
                   type="button"
                 >

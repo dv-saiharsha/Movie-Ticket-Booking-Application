@@ -13,7 +13,7 @@ import { useAuth } from './lib/storage'
 // LoaderWrapper and loading context removed for direct rendering
 export default function App() {
   return (
-    <div className="min-h-screen bg-slate text-silver transition-colors duration-300">
+  <div className="min-h-screen bg-slate text-silver transition-all duration-150 ease-in-out will-change-transform">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
