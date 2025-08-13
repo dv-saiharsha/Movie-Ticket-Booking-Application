@@ -1,7 +1,6 @@
 
 // React hooks and required components
 import { useEffect, useMemo, useState } from 'react'
-import { useLoading } from '../App'
 import { useNavigate, useParams } from 'react-router-dom'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -52,8 +51,6 @@ function Checkout() {
   const [method, setMethod] = useState('card')
   // State for card details
   const [cardDetails, setCardDetails] = useState({ number: '', name: '', expiry: '', cvv: '' })
-  // Loading state from context
-  const { setLoading } = useLoading()
 
   // On mount, load selected seats from sessionStorage or redirect if not found
   useEffect(() => {
@@ -88,7 +85,6 @@ function Checkout() {
 
   // Simulate payment and save booking to localStorage
   const pay = async () => {
-    setLoading(true)
     setTimeout(() => {
       // Simulate payment success
       const booking = {
@@ -102,7 +98,6 @@ function Checkout() {
       const list = JSON.parse(localStorage.getItem('cinebook:bookings') || '[]')
       list.push(booking)
       localStorage.setItem('cinebook:bookings', JSON.stringify(list))
-      setLoading(false)
       nav(`/ticket/${booking.id}`)
     }, 3000)
   }

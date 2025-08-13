@@ -5,14 +5,10 @@ import { useState, useEffect } from 'react'
 import { movies } from '../data/movies'
 import { shows, theatres } from '../data/theaters'
 import TheatreCard from '../components/TheatreCard'
-import LoadingSpinner from '../components/ui/LoadingSpinner'
-import { useLoading } from '../App'
 
 export default function MovieDetails() {
   // Get movie ID from URL
   const { id } = useParams()
-  // Use global loading context
-  const { loading, setLoading } = useLoading()
   // State for movie details
   const [movie, setMovie] = useState<any>(null)
   // State for shows for this movie and date
@@ -34,7 +30,6 @@ export default function MovieDetails() {
 
   // Simulate loading (network or computation)
   useEffect(() => {
-    setLoading(true)
     setTimeout(() => {
       // Find movie by ID
       const m = movies.find(m => m.id === id)
@@ -47,18 +42,9 @@ export default function MovieDetails() {
         return showDate.toISOString().slice(0,10) === selectedDate
       })
       setActiveShows(filteredShows)
-      setLoading(false)
     }, 600) // Simulate 600ms network delay
   }, [id, selectedDate])
 
-  // Show loading spinner while loading
-  if (loading) {
-    return (
-      <div className="container flex items-center justify-center min-h-screen">
-        <LoadingSpinner />
-      </div>
-    )
-  }
 
   // Render movie details, calendar, and showtimes
   return (
