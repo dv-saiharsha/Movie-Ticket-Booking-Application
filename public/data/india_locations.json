@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Andhra Pradesh",
+    "children": [
+      {
+        "name": "Anantapur",
+        "children": [
+          {
+            "name": "Agali"
+          },
+          {
+            "name": "Amarapuram"
+          }
+        ]
+      },
+      {
+        "name": "Visakhapatnam",
+        "children": [
+          { "name": "Anakapalle" },
+          { "name": "Bheemunipatnam" },
+          { "name": "Visakhapatnam" },
+          { "name": "Gajuwaka" },
+          { "name": "Malkapuram" }
+        ]
+      },
+      {
+        "name": "Hyderabad",
+        "children": [
+          { "name": "Hyderabad" },
+          { "name": "Secunderabad" },
+          { "name": "Gachibowli" },
+          { "name": "Madhapur" },
+          { "name": "Kukatpally" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Karnataka",
+    "children": [
+      {
+        "name": "Bengaluru Urban",
+        "children": [
+          {
+            "name": "Yelahanka"
+          },
+          {
+            "name": "Jakkur"
+          }
+        ]
+      },
+      {
+        "name": "Mysuru",
+        "children": [
+          {
+            "name": "Hunsur"
+          },
+          {
+            "name": "Piriyapatna"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Maharashtra",
+    "children": [
+      {
+        "name": "Mumbai Suburban",
+        "children": [
+          {
+            "name": "Andheri"
+          },
+          {
+            "name": "Bandra"
+          }
+        ]
+      },
+      {
+        "name": "Pune",
+        "children": [
+          {
+            "name": "Hinjawadi"
+          },
+          {
+            "name": "Wagholi"
+          }
+        ]
+      }
+    ]
+  }
+]
