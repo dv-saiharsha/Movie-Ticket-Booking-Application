@@ -3,6 +3,7 @@ import { useAuthStore } from '../../lib/storage'
 import { MapPin, Ticket, Percent, LogOut, Film, User, Moon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { loadIndiaLocations, LocationNode } from '../../lib/indiaLocations'
+import { placeIconMap } from './placeIconMap'
 
 export default function Navbar() {
   const { user, setUser } = useAuthStore()
@@ -10,6 +11,7 @@ export default function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false)
   const [allPlaces, setAllPlaces] = useState<string[]>([])
   const [selectedPlace, setSelectedPlace] = useState(user?.location?.village || '')
+  const [showLocationDropdown, setShowLocationDropdown] = useState(false)
 
   // Theme state: 'light' | 'dark'
   const [theme, setTheme] = useState(() => {
@@ -59,26 +61,13 @@ export default function Navbar() {
   const firstName = user?.name?.split(' ')[0] || 'Profile'
 
   return (
-  <header className="sticky top-0 z-40 border-b border-darkred shadow-sm bg-lightgrey">
+    <header className="sticky top-0 z-40 border-b border-darkred shadow-sm bg-lightgrey">
       <div className="container h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link to="/home" className="font-semibold text-lg flex items-center gap-2 text-darkred">
             CineBook
             <Film className="h-7 w-7 text-darkred" />
           </Link>
-          <div className="ml-4 flex items-center gap-1 text-sm text-black">
-            <MapPin className="h-4 w-4 text-darkred" />
-            <select
-              className="border border-darkred rounded px-1 text-black min-w-[220px] focus:ring-2 focus:ring-darkred"
-              value={selectedPlace}
-              onChange={e => handlePlaceChange(e.target.value)}
-            >
-              <option value="">Select Location</option>
-              {allPlaces.map(place => (
-                <option key={place} value={place}>{place}</option>
-              ))}
-            </select>
-          </div>
           {/* Theme toggle icon button */}
           <button
             className="ml-4 p-2 rounded-full border border-darkred text-darkred hover:bg-darkred/80 hover:text-lightgrey transition-all duration-150 ease-in-out will-change-transform"
@@ -92,6 +81,37 @@ export default function Navbar() {
           {user ? (
             <>
               <Link to="/my-tickets" className="hover:text-darkred flex items-center gap-1"><Ticket className="h-4 w-4 text-darkred" />My Tickets</Link>
+              {/* Location selector on right */}
+              <div className="relative ml-2">
+                <button
+                  className="flex items-center gap-1 px-3 py-1 rounded-full border border-darkred bg-white text-black font-semibold hover:bg-darkred/10 transition"
+                  onClick={() => setShowLocationDropdown(v => !v)}
+                  aria-label="Select Location"
+                >
+                  <MapPin className="h-4 w-4 text-darkred" />
+                    {selectedPlace && placeIconMap[selectedPlace] && (
+                      <span className="mr-1 align-middle inline-block">{placeIconMap[selectedPlace]}</span>
+                    )}
+                    <span className="font-medium text-black/80">{selectedPlace || 'Select Location'}</span>
+                </button>
+                {showLocationDropdown && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white border-2 border-darkred rounded-xl shadow-lg z-50">
+                    <select
+                      className="w-full px-4 py-2 rounded-xl border-0 text-black bg-white focus:ring-2 focus:ring-darkred outline-none"
+                      value={selectedPlace}
+                      onChange={e => { handlePlaceChange(e.target.value); setShowLocationDropdown(false); }}
+                      size={8}
+                    >
+                      <option value="">Select Location</option>
+                      {allPlaces.map(place => (
+                          <option key={place} value={place}>
+                            {place}
+                          </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
               <div className="relative">
                 <button
                   className="flex items-center gap-2 px-3 py-1 rounded-full text-black font-semibold hover:text-darkred transition border-2 border-darkred"
@@ -121,6 +141,31 @@ export default function Navbar() {
             </>
           ) : (
             <>
+              <div className="relative ml-2">
+                <button
+                  className="flex items-center gap-1 px-3 py-1 rounded-full border border-darkred bg-white text-black font-semibold hover:bg-darkred/10 transition"
+                  onClick={() => setShowLocationDropdown(v => !v)}
+                  aria-label="Select Location"
+                >
+                  <MapPin className="h-4 w-4 text-darkred" />
+                  <span className="font-medium text-black/80">{selectedPlace || 'Select Location'}</span>
+                </button>
+                {showLocationDropdown && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white border-2 border-darkred rounded-xl shadow-lg z-50">
+                    <select
+                      className="w-full px-4 py-2 rounded-xl border-0 text-black bg-white focus:ring-2 focus:ring-darkred outline-none"
+                      value={selectedPlace}
+                      onChange={e => { handlePlaceChange(e.target.value); setShowLocationDropdown(false); }}
+                      size={8}
+                    >
+                      <option value="">Select Location</option>
+                      {allPlaces.map(place => (
+                        <option key={place} value={place}>{place}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
               <Link to="/signin" className="px-4 py-2 rounded-2xl border border-yellow text-yellow font-semibold transition-all duration-150 ease-in-out">Sign In</Link>
               <Link to="/signup" className="px-4 py-2 rounded-2xl border border-yellow text-yellow font-semibold transition-all duration-150 ease-in-out">Sign Up</Link>
             </>

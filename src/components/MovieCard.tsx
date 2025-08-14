@@ -49,7 +49,12 @@ export default function MovieCard({ movie }: MovieCardProps) {
             </Button>
           </Link>
         ) : (
-          <Button className="mt-3 w-full" variant="default" onClick={() => setReminded(true)} disabled={reminded}>
+          <Button
+            className="mt-3 w-full bg-darkred text-lightgrey font-bold text-base py-2 rounded-lg shadow hover:bg-red transition"
+            variant="default"
+            onClick={() => setReminded(true)}
+            disabled={reminded}
+          >
             {reminded ? 'Notified' : 'Add to Reminder'}
           </Button>
         )}

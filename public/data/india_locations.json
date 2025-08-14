@@ -5,14 +5,186 @@
       {
         "name": "Anantapur",
         "children": [
-          {
-            "name": "Agali"
-          },
-          {
-            "name": "Amarapuram"
-          }
+          { "name": "Anantapur" },
+          { "name": "Agali" },
+          { "name": "Amarapuram" },
+          { "name": "Hindupur" },
+          { "name": "Guntakal" },
+          { "name": "Tadipatri" },
+          { "name": "Dharmavaram" }
         ]
       },
+  {
+    "name": "Delhi",
+    "children": [
+      {
+        "name": "New Delhi",
+        "children": [
+          { "name": "Delhi" },
+          { "name": "Connaught Place" },
+          { "name": "Karol Bagh" },
+          { "name": "Saket" },
+          { "name": "Dwarka" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Uttar Pradesh",
+    "children": [
+      {
+        "name": "Agra",
+        "children": [
+          { "name": "Agra" }
+        ]
+      },
+      {
+        "name": "Lucknow",
+        "children": [
+          { "name": "Lucknow" },
+          { "name": "Hazratganj" },
+          { "name": "Gomti Nagar" }
+        ]
+      },
+      {
+        "name": "Varanasi",
+        "children": [
+          { "name": "Varanasi" }
+        ]
+      },
+      {
+        "name": "Kanpur",
+        "children": [
+          { "name": "Kanpur" }
+        ]
+      },
+      {
+        "name": "Prayagraj",
+        "children": [
+          { "name": "Prayagraj" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "West Bengal",
+    "children": [
+      {
+        "name": "Kolkata",
+        "children": [
+          { "name": "Kolkata" },
+          { "name": "Salt Lake" },
+          { "name": "Howrah" }
+        ]
+      },
+      {
+        "name": "Darjeeling",
+        "children": [
+          { "name": "Darjeeling" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Gujarat",
+    "children": [
+      {
+        "name": "Ahmedabad",
+        "children": [
+          { "name": "Ahmedabad" },
+          { "name": "Maninagar" },
+          { "name": "Navrangpura" }
+        ]
+      },
+      {
+        "name": "Surat",
+        "children": [
+          { "name": "Surat" }
+        ]
+      },
+      {
+        "name": "Vadodara",
+        "children": [
+          { "name": "Vadodara" }
+        ]
+      },
+      {
+        "name": "Rajkot",
+        "children": [
+          { "name": "Rajkot" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Madhya Pradesh",
+    "children": [
+      {
+        "name": "Bhopal",
+        "children": [
+          { "name": "Bhopal" }
+        ]
+      },
+      {
+        "name": "Indore",
+        "children": [
+          { "name": "Indore" }
+        ]
+      },
+      {
+        "name": "Gwalior",
+        "children": [
+          { "name": "Gwalior" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Punjab",
+    "children": [
+      {
+        "name": "Amritsar",
+        "children": [
+          { "name": "Amritsar" }
+        ]
+      },
+      {
+        "name": "Ludhiana",
+        "children": [
+          { "name": "Ludhiana" }
+        ]
+      },
+      {
+        "name": "Jalandhar",
+        "children": [
+          { "name": "Jalandhar" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Rajasthan",
+    "children": [
+      {
+        "name": "Jaipur",
+        "children": [
+          { "name": "Jaipur" }
+        ]
+      },
+      {
+        "name": "Jodhpur",
+        "children": [
+          { "name": "Jodhpur" }
+        ]
+      },
+      {
+        "name": "Udaipur",
+        "children": [
+          { "name": "Udaipur" }
+        ]
+      }
+    ]
+  },
       {
         "name": "Visakhapatnam",
         "children": [
@@ -21,6 +193,33 @@
           { "name": "Visakhapatnam" },
           { "name": "Gajuwaka" },
           { "name": "Malkapuram" }
+        ]
+      },
+      {
+        "name": "Guntur",
+        "children": [
+          { "name": "Guntur" },
+          { "name": "Tenali" },
+          { "name": "Mangalagiri" },
+          { "name": "Ponnur" }
+        ]
+      },
+      {
+        "name": "Krishna",
+        "children": [
+          { "name": "Vijayawada" },
+          { "name": "Machilipatnam" },
+          { "name": "Gudivada" },
+          { "name": "Nuzvid" }
+        ]
+      },
+      {
+        "name": "Chittoor",
+        "children": [
+          { "name": "Tirupati" },
+          { "name": "Madanapalle" },
+          { "name": "Puttur" },
+          { "name": "Chittoor" }
         ]
       },
       {
@@ -68,23 +267,72 @@
       {
         "name": "Mumbai Suburban",
         "children": [
-          {
-            "name": "Andheri"
-          },
-          {
-            "name": "Bandra"
-          }
+          { "name": "Andheri" },
+          { "name": "Bandra" },
+          { "name": "Borivali" },
+          { "name": "Goregaon" },
+          { "name": "Malad" }
         ]
       },
       {
         "name": "Pune",
         "children": [
-          {
-            "name": "Hinjawadi"
-          },
-          {
-            "name": "Wagholi"
-          }
+          { "name": "Hinjawadi" },
+          { "name": "Wagholi" },
+          { "name": "Kothrud" },
+          { "name": "Baner" },
+          { "name": "Viman Nagar" }
+        ]
+      },
+      {
+        "name": "Nagpur",
+        "children": [
+          { "name": "Sitabuldi" },
+          { "name": "Dharampeth" },
+          { "name": "Civil Lines" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Tamil Nadu",
+    "children": [
+      {
+        "name": "Chennai",
+        "children": [
+          { "name": "T Nagar" },
+          { "name": "Velachery" },
+          { "name": "Adyar" },
+          { "name": "Anna Nagar" }
+        ]
+      },
+      {
+        "name": "Coimbatore",
+        "children": [
+          { "name": "Gandhipuram" },
+          { "name": "RS Puram" },
+          { "name": "Peelamedu" }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Telangana",
+    "children": [
+      {
+        "name": "Hyderabad",
+        "children": [
+          { "name": "Madhapur" },
+          { "name": "Banjara Hills" },
+          { "name": "Gachibowli" },
+          { "name": "Kukatpally" }
+        ]
+      },
+      {
+        "name": "Warangal",
+        "children": [
+          { "name": "Hanamkonda" },
+          { "name": "Kazipet" }
         ]
       }
     ]

@@ -11,6 +11,16 @@ import { Md4K } from 'react-icons/md'
 
 
 export default function Ticket() {
+  // Scroll to ticket details on mount for better visibility
+  useEffect(() => {
+    setTimeout(() => {
+      const el = document.querySelector('.container');
+      if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 60;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }, 200);
+  }, []);
   // Get booking ID from URL
   const { bookingId } = useParams()
   // State for booking details

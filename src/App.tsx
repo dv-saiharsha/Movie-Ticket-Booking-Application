@@ -3,6 +3,7 @@ import SignIn from './pages/Auth/SignIn'
 import SignUp from './pages/Auth/SignUp'
 import LandingAuth from './pages/Auth/LandingAuth'
 import Home from './pages/Home'
+import Events from './pages/Events'
 import MovieDetails from './pages/MovieDetails'
 import SeatSelection from './pages/SeatSelection'
 import Checkout from './pages/Checkout'
@@ -26,7 +27,8 @@ export default function App() {
         <Route path="/seat/:showId" element={<SeatSelection />} />
         <Route path="/checkout/:showId" element={<Checkout />} />
         <Route path="/ticket/:bookingId" element={<Ticket />} />
-        <Route path="/offers" element={<Offers />} />
+  <Route path="/offers" element={<Offers />} />
+  <Route path="/events" element={<Events />} />
         <Route path="/my-tickets" element={<MyTickets />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
