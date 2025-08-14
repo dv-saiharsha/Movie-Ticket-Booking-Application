@@ -1,6 +1,7 @@
 
 // SeatSelection page: Lets user select seats for a show, with suggestions
 import { useMemo, useState } from 'react'
+import { FaBicycle, FaMotorcycle, FaCar, FaShuttleVan, FaBus, FaUser } from 'react-icons/fa'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
@@ -12,6 +13,7 @@ import { SiDolby } from 'react-icons/si'
 import { Md4K } from 'react-icons/md'
 
 export default function SeatSelection() {
+  const icons = [FaUser, FaBicycle, FaMotorcycle, FaCar, FaShuttleVan, FaBus]
   const nav = useNavigate() // Navigation hook
   const { showId } = useParams() // Get show ID from URL
   const location = useLocation()
@@ -22,10 +24,11 @@ export default function SeatSelection() {
   const show = shows.find(s => s.id === showId)!
   const theatre = theatres.find(t => t.id === show.theatreId)!
   const layout = theatre.layouts[show.layoutId]
-  // State for ticket count, selected seats, and suggested seats
+  // State for ticket count, selected seats, suggested seats, and modal
   const [count, setCount] = useState(initialCount)
   const [selected, setSelected] = useState<string[]>([])
   const [suggested, setSuggested] = useState<string[]>([])
+  const [showCountModal, setShowCountModal] = useState(true)
 
   // Build seat grid with booked/blocked info
   const seatGrid = useMemo(() => {
@@ -72,30 +75,56 @@ export default function SeatSelection() {
   // Render seat selection UI
   return (
     <div className="container py-6 space-y-4 text-black bg-lightgrey ">
-      <Card>
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div>
-            <h2 className="text-xl font-semibold text-darkred">{theatre.name}</h2>
-            <p className="text-sm text-darkred flex items-center gap-1">
-              {new Date(show.time).toLocaleString()} •
-              {show.speciality === 'Dolby Atmos' && <SiDolby className="text-darkred text-base" title="Dolby Atmos" />}
-              {show.speciality === '4K' && <Md4K className="text-darkred text-base" title="4K" />}
-              {show.speciality} • ₹{show.price}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-black">Tickets:</span>
-            {/* Select number of tickets */}
-            <select value={count} onChange={e=>{setCount(parseInt(e.target.value)); setSelected([]); setSuggested([])}} className="h-10 border-2 border-darkred text-black rounded-2xl px-3 focus:ring-2 focus:ring-darkred">
-              {Array.from({length:6},(_,i)=>i+1).map(n => <option key={n} value={n}>{n}</option>)}
-            </select>
-            {/* Suggest seats button */}
-            <Button onClick={onSuggest} variant="outline">Suggest seats</Button>
-            {/* Continue to checkout */}
-            <Button onClick={proceed} className="bg-darkred text-lightgrey font-bold text-lg py-2 px-6 rounded-xl shadow hover:bg-red transition">Continue</Button>
+      {/* Ticket count modal */}
+      {showCountModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-md" onClick={()=>setShowCountModal(false)} />
+          <div className="relative z-10 bg-lightgrey rounded-2xl shadow-2xl p-8 min-w-[380px] flex flex-col items-center border-2 border-darkred">
+            <h4 className="text-3xl font-extrabold text-black mb-4 tracking-wide">How many seats?</h4>
+            {/* Show only the selected vehicle icon, large and centered */}
+            <div className="mb-4 flex items-center justify-center">
+              {(() => {
+                const Icon = icons[count-1] || FaUser;
+                return <Icon className="text-6xl text-darkred drop-shadow" />
+              })()}
+            </div>
+            <div className="flex gap-4 mb-6">
+              {[1,2,3,4,5,6].map(n => (
+                <button
+                  key={n}
+                  className={`w-10 h-10 flex items-center justify-center rounded-full text-lg font-bold border-2 transition-all duration-150 ${count===n ? 'bg-red text-white border-red shadow-lg scale-110' : 'bg-white text-black border-slate-300 hover:border-red'} focus:outline-none`}
+                  onClick={()=>setCount(n)}
+                  aria-label={`Select ${n} seats`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+            <Button onClick={()=>setShowCountModal(false)} className="w-full mt-2 bg-red text-white font-bold text-lg py-3 rounded-xl shadow hover:bg-darkred transition">Select Seats</Button>
           </div>
         </div>
-      </Card>
+      )}
+      {/* Main content only visible when modal is closed */}
+      {!showCountModal && (
+        <Card>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <h2 className="text-xl font-semibold text-darkred">{theatre.name}</h2>
+              <p className="text-sm text-darkred flex items-center gap-1">
+                {new Date(show.time).toLocaleString()} •
+                {show.speciality === 'Dolby Atmos' && <SiDolby className="text-darkred text-base" title="Dolby Atmos" />}
+                {show.speciality === '4K' && <Md4K className="text-darkred text-base" title="4K" />}
+                {show.speciality} • ₹{show.price}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-black">Tickets: {count}</span>
+              <Button onClick={onSuggest} variant="outline">Suggest seats</Button>
+              <Button onClick={proceed} className="bg-darkred text-lightgrey font-bold text-lg py-2 px-6 rounded-xl shadow hover:bg-red transition">Continue</Button>
+            </div>
+          </div>
+        </Card>
+      )}
 
       <Card>
         <ScreenArc />
@@ -129,6 +158,13 @@ export default function SeatSelection() {
               )
             })}
           </div>
+          {/* Reset and Continue buttons */}
+          {selected.length > 0 && (
+            <div className="mt-4 flex gap-4 justify-center">
+              <Button onClick={()=>{setSelected([]);}} className="bg-red text-white font-bold px-6 py-2 rounded-xl shadow hover:bg-darkred transition">Reset Seats</Button>
+              <Button onClick={proceed} className="bg-darkred text-lightgrey font-bold px-6 py-2 rounded-xl shadow hover:bg-red transition">Continue</Button>
+            </div>
+          )}
         </div>
         <div className="mt-4 flex gap-4 text-sm">
           <div className="flex items-center gap-1"><span className="w-4 h-4 inline-block rounded-sm bg-error" />Booked</div>

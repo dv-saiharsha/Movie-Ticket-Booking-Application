@@ -99,7 +99,7 @@ function Checkout() {
       list.push(booking)
       localStorage.setItem('cinebook:bookings', JSON.stringify(list))
       nav(`/ticket/${booking.id}`)
-    }, 3000)
+    }, 800)
   }
 
   // Render checkout UI

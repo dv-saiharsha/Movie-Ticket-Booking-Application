@@ -40,10 +40,15 @@ export default function Seat({ id, state, onClick }: Props) {
       hover = 'hover:ring-2 hover:ring-darkred hover:brightness-110';
   }
 
+  // Animation: scale up and shadow for selected/suggested
+  let animate = ''
+  if (state === 'selected') animate = 'scale-110 shadow-lg z-10'
+  else if (state === 'suggested') animate = 'animate-pulse shadow-md z-10'
+
   return (
     <button
       onClick={onClick}
-      className={`w-6 h-6 m-0.5 rounded-sm ${color} ${border} ${hover} ${textColor} text-[10px] flex items-center justify-center transition`}
+      className={`w-6 h-6 m-0.5 rounded-sm ${color} ${border} ${hover} ${textColor} text-[10px] flex items-center justify-center transition-all duration-200 ease-in-out transform ${animate}`}
       disabled={state === 'booked' || state === 'blocked'}
       style={{ cursor: (state === 'booked' || state === 'blocked') ? 'not-allowed' : 'pointer' }}
     >

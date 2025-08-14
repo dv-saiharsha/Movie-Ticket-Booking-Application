@@ -1,16 +1,12 @@
 export default function ScreenArc() {
   return (
-    <div className="relative w-full flex flex-col items-center my-4">
-      <svg viewBox="0 0 500 120" className="w-full h-16">
+    <div className="relative w-full flex flex-col items-center my-6">
+      <div className="mb-2 text-3xl font-extrabold text-darkred tracking-widest drop-shadow text-center select-none">SCREEN</div>
+      <svg viewBox="0 0 600 180" className="w-full h-32">
         <defs>
-          <path id="curve" d="M 20 100 Q 250 10 480 100" />
+          <path id="curve" d="M 40 160 Q 300 20 560 160" />
         </defs>
-        <use href="#curve" fill="transparent" stroke="#fee36e" strokeWidth="3"/>
-        <text width="500">
-          <textPath href="#curve" startOffset="50%" textAnchor="middle" className="fill-black tracking-[0.3em] text-sm font-bold">
-            SCREEN
-          </textPath>
-        </text>
+        <use href="#curve" fill="transparent" stroke="#8B1414" strokeWidth="7" />
       </svg>
     </div>
   )

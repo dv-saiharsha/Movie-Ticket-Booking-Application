@@ -48,52 +48,52 @@ export default function MovieDetails() {
 
   // Render movie details, calendar, and showtimes
   return (
-  <div className="min-h-screen flex flex-col justify-between bg-lightgrey">
-  <div className="container py-6 space-y-6 text-black flex-1">
-      {movie && (
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Movie poster and info */}
-          <img src={movie.poster} className="w-56 h-80 object-cover rounded-2xl border-2 border-lightteal" />
-          <div className="space-y-2">
-            <h1 className="text-2xl font-semibold text-darkred">{movie.title}</h1>
-            <div className="text-sm text-black">{movie.languages.join(', ')} • {movie.genres.join(', ')} • {movie.durationMins} mins</div>
-            <p className="text-black/70">{movie.synopsis}</p>
+    <div className="min-h-screen flex flex-col justify-between bg-lightgrey">
+      <div className="container py-6 space-y-6 text-black flex-1">
+        {movie && (
+          <div className="flex flex-col md:flex-row gap-6">
+            {/* Movie poster and info */}
+            <img src={movie.poster} className="w-56 h-80 object-cover rounded-2xl border-2 border-lightteal" />
+            <div className="space-y-2">
+              <h1 className="text-2xl font-semibold text-darkred">{movie.title}</h1>
+              <div className="text-sm text-black">{movie.languages.join(', ')} • {movie.genres.join(', ')} • {movie.durationMins} mins</div>
+              <p className="text-black/70">{movie.synopsis}</p>
+            </div>
           </div>
-        </div>
-      )}
-      {/* Sliding calendar for next 5 days */}
-      <div className="flex gap-2 overflow-x-auto py-2 mb-2">
-        {next5Days.map((d, i) => {
-          const iso = d.toISOString().slice(0,10)
-          const isSelected = iso === selectedDate
-          return (
-            <button
-              key={iso}
-              className={`flex flex-col items-center px-4 py-2 rounded-2xl border-2 transition-all duration-150 ease-in-out min-w-[70px] ${isSelected ? 'text-darkred border-darkred font-bold' : 'text-black border-lightgrey'}`}
-              onClick={() => setSelectedDate(iso)}
-            >
-              <span className="text-lg">{d.toLocaleString('default', { month: 'short' })}</span>
-              <span className="text-2xl font-bold">{d.getDate()}</span>
-              <span className="text-xs">{d.toLocaleString('default', { weekday: 'short' })}</span>
-            </button>
-          )
-        })}
-      </div>
-      <div className="space-y-3">
-  <h2 className="text-xl font-semibold text-darkred">Select Theatre & Showtime</h2>
-        {/* List all theatres with shows for this movie and date */}
-        {theatres.map(t => {
-          const tShows = activeShows.filter(s => s.theatreId === t.id)
-          if (!tShows.length) return null
-          return <TheatreCard key={t.id} theatre={t} shows={tShows} />
-        })}
-        {/* Show message if no shows available */}
-        {activeShows.length === 0 && (
-          <div className="text-black text-center py-8 text-lg">No shows for this movie on the selected date.</div>
         )}
+        {/* Sliding calendar for next 5 days */}
+        <div className="flex gap-2 overflow-x-auto py-2 mb-2">
+          {next5Days.map((d, i) => {
+            const iso = d.toISOString().slice(0,10)
+            const isSelected = iso === selectedDate
+            return (
+              <button
+                key={iso}
+                className={`flex flex-col items-center px-4 py-2 rounded-2xl border-2 transition-all duration-150 ease-in-out min-w-[70px] ${isSelected ? 'text-darkred border-darkred font-bold' : 'text-black border-lightgrey'}`}
+                onClick={() => setSelectedDate(iso)}
+              >
+                <span className="text-lg">{d.toLocaleString('default', { month: 'short' })}</span>
+                <span className="text-2xl font-bold">{d.getDate()}</span>
+                <span className="text-xs">{d.toLocaleString('default', { weekday: 'short' })}</span>
+              </button>
+            )
+          })}
+        </div>
+        <div className="space-y-3">
+          <h2 className="text-xl font-semibold text-darkred">Select Theatre & Showtime</h2>
+          {/* List all theatres with shows for this movie and date */}
+          {theatres.map(t => {
+            const tShows = activeShows.filter(s => s.theatreId === t.id)
+            if (!tShows.length) return null
+            return <TheatreCard key={t.id} theatre={t} shows={tShows} />
+          })}
+          {/* Show message if no shows available */}
+          {activeShows.length === 0 && (
+            <div className="text-black text-center py-8 text-lg">No shows for this movie on the selected date.</div>
+          )}
+        </div>
       </div>
-      </div>
-  <footer className="w-full text-center py-4 text-xs text-black bg-transparent">Developed by Venkata Sai Harshith Danda</footer>
+      <footer className="w-full text-center py-4 text-xs text-black bg-transparent">Developed by Venkata Sai Harshith Danda</footer>
     </div>
   )
 }
