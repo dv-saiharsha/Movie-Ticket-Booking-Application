@@ -9,7 +9,7 @@ import { FaGithub, FaFacebook } from "react-icons/fa";
 const tabClass = (active: boolean) =>
   cn(
     "px-4 py-2 rounded-t-lg font-semibold transition-colors duration-150",
-    active ? "bg-white text-black shadow" : "bg-gray-100 text-gray-500 hover:text-black"
+    active ? "text-black shadow" : "text-gray-500 hover:text-black"
   );
 
 export default function LandingAuth() {
@@ -17,7 +17,7 @@ export default function LandingAuth() {
   const [tab, setTab] = useState<"login" | "signup">("login");
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-100 to-white dark:from-zinc-900 dark:to-zinc-800 transition-colors duration-150">
+    <div className="min-h-screen flex flex-col">
       {/* Navbar placeholder */}
       <div className="h-16" />
       <div className="flex flex-1 items-center justify-center px-4">
@@ -25,7 +25,7 @@ export default function LandingAuth() {
         <div className="flex flex-col md:flex-row items-center gap-12 w-full max-w-5xl">
           {/* Art/Info */}
           <div className="flex-1 flex flex-col items-start gap-6">
-            <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-indigo-700 dark:text-white transition-colors duration-150">
+            <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-darkred transition-colors duration-150">
               Book Your Movie Tickets Effortlessly
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-md">
@@ -49,7 +49,7 @@ export default function LandingAuth() {
             {/* Modal Overlay */}
             {modalOpen && (
               <div
-                className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm flex items-center justify-center transition-opacity duration-150"
+                className="fixed inset-0 z-40 backdrop-blur-sm flex items-center justify-center transition-opacity duration-150"
                 onClick={() => setModalOpen(false)}
               />
             )}
@@ -65,7 +65,7 @@ export default function LandingAuth() {
             >
               <Card className="overflow-hidden">
                 {/* Tabs */}
-                <div className="flex border-b bg-gray-50 dark:bg-zinc-900">
+                <div className="flex border-b ">
                   <button
                     className={tabClass(tab === "login")}
                     onClick={() => setTab("login")}
@@ -79,19 +79,19 @@ export default function LandingAuth() {
                     Sign Up
                   </button>
                 </div>
-                <div className="p-6 bg-white dark:bg-zinc-900 transition-colors duration-150">
+                <div className="p-6 transition-colors duration-150">
                   {tab === "login" ? <LoginForm /> : <SignupForm />}
                   <div className="flex items-center my-4">
-                    <div className="flex-1 h-px bg-gray-200 dark:bg-zinc-700" />
+                    <div className="flex-1 h-px" />
                     <span className="mx-2 text-gray-400 text-xs">or continue with</span>
-                    <div className="flex-1 h-px bg-gray-200 dark:bg-zinc-700" />
+                    <div className="flex-1 h-px" />
                   </div>
                   <div className="flex gap-3 justify-center">
                     <Button variant="outline" className="flex items-center gap-2" disabled>
                       <FcGoogle className="text-xl" /> Google
                     </Button>
                     <Button variant="outline" className="flex items-center gap-2" disabled>
-                      <FaGithub className="text-xl text-gray-700 dark:text-white" /> GitHub
+                      <FaGithub className="text-xl" /> GitHub
                     </Button>
                     <Button variant="outline" className="flex items-center gap-2" disabled>
                       <FaFacebook className="text-xl text-blue-600" /> Facebook

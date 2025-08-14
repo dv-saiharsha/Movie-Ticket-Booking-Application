@@ -16,15 +16,15 @@ export default function MyTickets() {
 
   // Show message if no tickets booked
   if (!bookings.length) {
-    return <div className="min-h-screen flex flex-col justify-between bg-white">
+  return <div className="min-h-screen flex flex-col justify-between ">
       <div className="container py-6">No tickets yet.</div>
-      <footer className="w-full text-center py-4 text-xs text-silver bg-transparent">Developed by Venkata Sai Harshith Danda</footer>
+  <footer className="w-full text-center py-4 text-xs text-secondary">Developed by Venkata Sai Harshith Danda</footer>
     </div>
   }
 
   // Render all tickets as cards
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-white">
+  <div className="min-h-screen flex flex-col justify-between ">
       <div className="container py-6 grid gap-4 grid-cols-1 text-black">
         {bookings.map((b:any) => {
           // Find show, theatre, and movie for each booking
@@ -32,19 +32,19 @@ export default function MyTickets() {
           const theatre = theatres.find(t => t.id === b.theatreId)!
           const movie = movies.find(m => m.id === show.movieId)!
           return (
-            <Card key={b.id} className="flex items-center justify-between bg-white border-orange text-black">
+            <Card key={b.id} className="flex items-center justify-between border-orange text-black">
               <div>
                 <div className="font-semibold text-black">{movie.title}</div>
                 <div className="text-sm text-black/80">{theatre.name}  {new Date(show.time).toLocaleString()}</div>
                 <div className="text-sm text-black/80">Seats: {b.seats.join(', ')}</div>
               </div>
               {/* Link to ticket details page */}
-              <Link to={`/ticket/${b.id}`} className="text-yellow hover:underline flex items-center gap-1"><TicketIcon />View</Link>
+              <Link to={`/ticket/${b.id}`} className="text-accent hover:underline flex items-center gap-1"><TicketIcon />View</Link>
             </Card>
           )
         })}
       </div>
-      <footer className="w-full text-center py-4 text-xs text-silver bg-transparent">Developed by Venkata Sai Harshith Danda</footer>
+  <footer className="w-full text-center py-4 text-xs text-secondary bg-transparent">Developed by Venkata Sai Harshith Danda</footer>
     </div>
   )
 }

@@ -7,30 +7,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        yellow: {
-          DEFAULT: '#feda6a',
+        black: {
+          DEFAULT: '#1A1414', // Top stripe
         },
-        silver: {
-          DEFAULT: '#d4d4dc',
+        darkred: {
+          DEFAULT: '#8B1414', // Second stripe
         },
-        matte: {
-          DEFAULT: '#393f4d',
+        red: {
+          DEFAULT: '#D94343', // Third stripe
         },
-        slate: {
-          DEFAULT: '#1d1e22',
+        lightgrey: {
+          DEFAULT: '#F2F2F2', // Bottom stripe
+        },
+        error: {
+          DEFAULT: '#8B1414',
+        },
+        success: {
+          DEFAULT: '#16A6A6',
         },
         white: {
           DEFAULT: '#FFFFFF',
-          50: '#FFFFFF',
-          100: '#F9F9F9',
-          200: '#F3F3F3',
-          300: '#EDEDED',
-          400: '#E7E7E7',
-          500: '#E1E1E1',
-          600: '#DBDBDB',
-          700: '#D5D5D5',
-          800: '#CFCFCF',
-          900: '#C9C9C9',
         },
       },
       boxShadow: {

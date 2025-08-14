@@ -10,17 +10,17 @@ export default function Offers() {
     {title:'STU20', desc:'20% off with student ID', code:'STU20'},
   ]
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-white">
+  <div className="min-h-screen flex flex-col justify-between ">
       <div className="container py-6 grid gap-4 grid-cols-1">
         {/* Render each offer as a card */}
         {offers.map(o => (
-          <Card key={o.title} className="space-y-2 group bg-white border-orange text-black">
+          <Card key={o.title} className="space-y-2 group border-orange text-black">
             <h3 className="font-semibold text-black">{o.title}</h3>
             <p className="text-sm text-black">{o.desc}</p>
             <div className="text-xs text-black/80">Use code: {o.code}</div>
             {/* Button to copy coupon code to clipboard */}
             <button
-              className="mt-2 px-3 py-1 rounded-full bg-orange text-white font-semibold shadow hover:bg-orange/80 transition-all duration-150 ease-in-out opacity-0 group-hover:opacity-100"
+              className="mt-2 px-3 py-1 rounded-full text-lightgrey font-semibold shadow transition-all duration-150 ease-in-out opacity-0 group-hover:opacity-100 bg-darkred"
               onClick={()=>navigator.clipboard.writeText(o.code)}
             >
               Apply Coupon
@@ -28,7 +28,7 @@ export default function Offers() {
           </Card>
         ))}
       </div>
-      <footer className="w-full text-center py-4 text-xs text-silver bg-transparent">Developed by Venkata Sai Harshith Danda</footer>
+  <footer className="w-full text-center py-4 text-xs text-black">Developed by Venkata Sai Harshith Danda</footer>
     </div>
   )
 }

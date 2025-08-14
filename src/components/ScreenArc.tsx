@@ -7,7 +7,7 @@ export default function ScreenArc() {
         </defs>
         <use href="#curve" fill="transparent" stroke="#fee36e" strokeWidth="3"/>
         <text width="500">
-          <textPath href="#curve" startOffset="50%" textAnchor="middle" className="fill-white tracking-[0.3em] text-sm font-bold">
+          <textPath href="#curve" startOffset="50%" textAnchor="middle" className="fill-black tracking-[0.3em] text-sm font-bold">
             SCREEN
           </textPath>
         </text>

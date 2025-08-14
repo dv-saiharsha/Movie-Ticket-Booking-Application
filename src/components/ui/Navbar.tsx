@@ -59,17 +59,17 @@ export default function Navbar() {
   const firstName = user?.name?.split(' ')[0] || 'Profile'
 
   return (
-    <header className="sticky top-0 z-40 bg-matte border-b border-matte shadow-sm">
+  <header className="sticky top-0 z-40 border-b border-darkred shadow-sm bg-lightgrey">
       <div className="container h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link to="/home" className="font-semibold text-lg flex items-center gap-2 text-yellow">
+          <Link to="/home" className="font-semibold text-lg flex items-center gap-2 text-darkred">
             CineBook
-            <Film className="h-7 w-7 text-yellow" />
+            <Film className="h-7 w-7 text-darkred" />
           </Link>
-          <div className="ml-4 flex items-center gap-1 text-sm text-silver">
-            <MapPin className="h-4 w-4 text-yellow" />
+          <div className="ml-4 flex items-center gap-1 text-sm text-black">
+            <MapPin className="h-4 w-4 text-darkred" />
             <select
-              className="border border-matte rounded px-1 bg-matte text-silver min-w-[220px] focus:ring-2 focus:ring-yellow"
+              className="border border-darkred rounded px-1 text-black min-w-[220px] focus:ring-2 focus:ring-darkred"
               value={selectedPlace}
               onChange={e => handlePlaceChange(e.target.value)}
             >
@@ -81,7 +81,7 @@ export default function Navbar() {
           </div>
           {/* Theme toggle icon button */}
           <button
-            className="ml-4 p-2 rounded-full border border-yellow bg-matte text-yellow hover:bg-yellow hover:text-matte transition-all duration-150 ease-in-out will-change-transform"
+            className="ml-4 p-2 rounded-full border border-darkred text-darkred hover:bg-darkred/80 hover:text-lightgrey transition-all duration-150 ease-in-out will-change-transform"
             aria-label="Toggle theme"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           >
@@ -91,26 +91,26 @@ export default function Navbar() {
         <nav className="flex items-center gap-6 text-sm">
           {user ? (
             <>
-              <Link to="/my-tickets" className="hover:text-yellow flex items-center gap-1"><Ticket className="h-4 w-4 text-yellow" />My Tickets</Link>
+              <Link to="/my-tickets" className="hover:text-darkred flex items-center gap-1"><Ticket className="h-4 w-4 text-darkred" />My Tickets</Link>
               <div className="relative">
                 <button
-                  className="flex items-center gap-2 px-3 py-1 rounded-full bg-yellow text-matte font-semibold hover:bg-matte hover:text-yellow transition border-2 border-yellow"
+                  className="flex items-center gap-2 px-3 py-1 rounded-full text-black font-semibold hover:text-darkred transition border-2 border-darkred"
                   onClick={() => setProfileOpen(v => !v)}
                 >
-                  <User className="h-5 w-5 text-matte group-hover:text-yellow transition" />
+                  <User className="h-5 w-5 text-black group-hover:text-darkred transition" />
                   <span className="transition">{firstName}</span>
                 </button>
                 {profileOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-matte border border-matte rounded shadow-lg z-50">
+                  <div className="absolute right-0 mt-2 w-40 border border-darkred rounded shadow-lg z-50 bg-lightgrey">
                     <Link
                       to="/offers"
-                      className="block px-4 py-2 text-silver hover:bg-yellow/10 transition"
+                      className="block px-4 py-2 text-secondary transition"
                       onClick={() => setProfileOpen(false)}
                     >
-                      <Percent className="inline h-4 w-4 mr-1 text-yellow" /> Offers
+                      <Percent className="inline h-4 w-4 mr-1 text-accent" /> Offers
                     </Link>
                     <button
-                      className="w-full text-left px-4 py-2 text-silver hover:bg-yellow/10 flex items-center gap-2 transition"
+                      className="w-full text-left px-4 py-2 text-silver flex items-center gap-2 transition"
                       onClick={() => { setUser(null); nav('/home') }}
                     >
                       <LogOut className="h-4 w-4 text-yellow" /> Logout
@@ -121,8 +121,8 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link to="/signin" className="px-4 py-2 rounded-2xl border border-yellow text-yellow font-semibold hover:bg-yellow hover:text-matte transition-all duration-150 ease-in-out">Sign In</Link>
-              <Link to="/signup" className="px-4 py-2 rounded-2xl border border-yellow text-yellow font-semibold hover:bg-yellow hover:text-matte transition-all duration-150 ease-in-out">Sign Up</Link>
+              <Link to="/signin" className="px-4 py-2 rounded-2xl border border-yellow text-yellow font-semibold transition-all duration-150 ease-in-out">Sign In</Link>
+              <Link to="/signup" className="px-4 py-2 rounded-2xl border border-yellow text-yellow font-semibold transition-all duration-150 ease-in-out">Sign Up</Link>
             </>
           )}
         </nav>

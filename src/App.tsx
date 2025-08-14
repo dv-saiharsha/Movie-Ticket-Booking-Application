@@ -15,12 +15,12 @@ import { useAuthStore } from './lib/storage'
 export default function App() {
   const { user } = useAuthStore();
   return (
-    <div className="min-h-screen bg-slate text-silver transition-all duration-150 ease-in-out will-change-transform">
+    <div className="min-h-screen bg-lightgrey text-black transition-all duration-150 ease-in-out will-change-transform">
       <Navbar />
       <Routes>
-  <Route path="/" element={<Home />} />
-  <Route path="/signin" element={<SignIn />} />
-  <Route path="/signup" element={<SignUp />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/home" element={<Home />} />
         <Route path="/movie/:id" element={<MovieDetails />} />
         <Route path="/seat/:showId" element={<SeatSelection />} />

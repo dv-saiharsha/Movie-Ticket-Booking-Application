@@ -138,18 +138,18 @@ function AuthModal({ open, onOpenChange, defaultTab = "signin", onSuccess }: Aut
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="fixed inset-0 bg-black/60" onClick={() => onOpenChange(false)} />
+  <div className="fixed inset-0" onClick={() => onOpenChange(false)} />
       <div className="relative z-10 max-w-md w-[92vw]">
         <Card className="overflow-hidden shadow-2xl border-none">
-          <div className="bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white p-4">
+          <div className="text-black p-4">
             <div className="flex items-center gap-2 text-xl font-bold">
               <Film className="h-5 w-5" /> {title}
             </div>
           </div>
           <div className="p-6">
             <div className="flex mb-4">
-              <button className={`flex-1 py-2 rounded-t-lg font-semibold transition-colors duration-150 ${tab === 'signin' ? 'bg-white text-black shadow' : 'bg-gray-100 text-gray-500 hover:text-black'}`} onClick={() => setTab('signin')}>Sign In</button>
-              <button className={`flex-1 py-2 rounded-t-lg font-semibold transition-colors duration-150 ${tab === 'signup' ? 'bg-white text-black shadow' : 'bg-gray-100 text-gray-500 hover:text-black'}`} onClick={() => setTab('signup')}>Sign Up</button>
+              <button className={`flex-1 py-2 rounded-t-lg font-semibold transition-colors duration-150 ${tab === 'signin' ? 'text-black shadow' : 'text-gray-500 hover:text-black'}`} onClick={() => setTab('signin')}>Sign In</button>
+              <button className={`flex-1 py-2 rounded-t-lg font-semibold transition-colors duration-150 ${tab === 'signup' ? 'text-black shadow' : 'text-gray-500 hover:text-black'}`} onClick={() => setTab('signup')}>Sign Up</button>
             </div>
             <div className="grid gap-4">
               <AnimatePresence mode="wait">
@@ -160,8 +160,8 @@ function AuthModal({ open, onOpenChange, defaultTab = "signin", onSuccess }: Aut
                 )}
               </AnimatePresence>
               <div className="relative py-2">
-                <div className="h-px bg-gray-200 my-2" />
-                <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-white px-2 text-xs text-gray-400">or</span>
+                <div className="h-px my-2" />
+                <span className="absolute left-1/2 -translate-x-1/2 -top-3 px-2 text-xs text-gray-400">or</span>
               </div>
               <SocialButtons onSuccess={onSuccess} />
             </div>
@@ -183,23 +183,23 @@ function Hero({ onBook }: { onBook: () => void }) {
   return (
     <section className="relative min-h-[70vh] grid place-items-center overflow-hidden">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?q=80&w=1780&auto=format&fit=crop')] bg-cover bg-center"/>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-background"/>
+  <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-lightgrey"/>
 
       <div className="relative z-10 text-center max-w-3xl mx-auto px-6">
-        <div className="inline-flex items-center gap-2 rounded-full bg-black/50 px-3 py-1 text-xs text-white mb-4">
+  <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs text-lightgrey mb-4 bg-darkred">
           <Film className="h-3.5 w-3.5"/> Your next story awaits
         </div>
-        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-white">
+  <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-darkred">
           Book movie tickets in a <span className="text-fuchsia-300">click</span>
         </h1>
-        <p className="mt-3 text-white/80">
+  <p className="mt-3 text-black/80">
           Discover new releases, fan screenings and more — all in Cinebook.
         </p>
         <div className="mt-6 flex items-center justify-center gap-3">
           <Button size="lg" onClick={onBook} className="shadow-lg">
             <Ticket className="mr-2 h-5 w-5"/> Book Now
           </Button>
-          <Button size="lg" variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20">
+          <Button size="lg" variant="outline" className="border-darkred/30 text-darkred">
             Browse Events
           </Button>
         </div>
@@ -224,7 +224,7 @@ function MoviesPage({ onSignOut }: { onSignOut: () => void }){
         {fakeMovies.map(m => (
           <Card key={m.id} className="hover:shadow-lg transition-all">
             <div className="p-4">
-              <div className="h-44 rounded-xl bg-muted mb-4 grid place-items-center text-muted-foreground">Poster</div>
+              <div className="h-44 rounded-xl mb-4 grid place-items-center text-muted-foreground">Poster</div>
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-medium">{m.title}</div>
@@ -256,7 +256,7 @@ export default function CinebookAuthFlow(){
   const signOut = () => { clearAuthed(); setAuthedState(false); };
 
   return (
-    <div className="min-h-screen bg-background">
+  <div className="min-h-screen">
       {!authed ? (
         <>
           <Hero onBook={handleBookNow} />

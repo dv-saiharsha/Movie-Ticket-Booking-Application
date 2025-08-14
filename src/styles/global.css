@@ -16,7 +16,8 @@ html, body, #root {
 }
 
 body {
-  @apply text-silver bg-slate;
+  color: #1A1414;
+  background-color: #F2F2F2;
   min-height: 100vh;
   min-width: 100vw;
   width: 100vw;
@@ -32,5 +33,9 @@ body {
 }
 
 .container {
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }

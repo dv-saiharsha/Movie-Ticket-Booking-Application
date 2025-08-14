@@ -6,34 +6,38 @@ type Props = {
 
 export default function Seat({ id, state, onClick }: Props) {
 
-  // Color logic: selected=green, booked=red, suggested=blue, blocked=silver, free=matte/yellow border
+  // Color logic: selected=black, booked=red, suggested=lightgrey with darkred border, free=lightgrey with black border
   let color = ''
-  let textColor = 'text-black'
+  let textColor = 'text-lightgrey'
   let border = ''
   let hover = ''
   switch (state) {
     case 'booked':
-      color = 'bg-red-600';
-      textColor = 'text-white';
+      color = 'bg-red';
+      textColor = 'text-lightgrey';
+      border = 'border border-red';
       break;
     case 'suggested':
-      color = 'bg-blue-500';
-      textColor = 'text-white';
-      hover = 'hover:ring-2 hover:ring-yellow hover:brightness-110';
+      color = 'bg-lightgrey';
+      textColor = 'text-darkred';
+      border = 'border-2 border-darkred';
+      hover = 'hover:ring-2 hover:ring-darkred hover:brightness-110';
       break;
     case 'selected':
-      color = 'bg-green-500';
-      textColor = 'text-white';
+      color = 'bg-darkred';
+      textColor = 'text-lightgrey';
+      border = 'border-2 border-black ring-2 ring-darkred';
       break;
     case 'blocked':
-      color = 'bg-silver';
-      textColor = 'text-matte';
+      color = 'bg-lightgrey';
+      textColor = 'text-darkred';
+      border = 'border border-darkred opacity-50';
       break;
-    default:
-      color = 'bg-matte';
-      textColor = 'text-silver';
-      border = 'border border-yellow';
-      hover = 'hover:bg-blue-500';
+    default: // free
+      color = 'bg-lightgrey';
+      textColor = 'text-black';
+      border = 'border border-black';
+      hover = 'hover:ring-2 hover:ring-darkred hover:brightness-110';
   }
 
   return (

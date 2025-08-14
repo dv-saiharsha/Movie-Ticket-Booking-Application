@@ -104,11 +104,11 @@ function Checkout() {
 
   // Render checkout UI
   return (
-    <div className="container py-6 space-y-4 bg-slate min-h-screen text-silver">
+  <div className="container py-6 space-y-4 min-h-screen text-black bg-lightgrey">
       <Card>
-        <h2 className="text-xl font-semibold mb-2 text-yellow">Order Summary</h2>
-        <p className="text-sm text-silver">{theatre.name} • {new Date(show.time).toLocaleString()} • {show.speciality}</p>
-        <div className="mt-4 space-y-1 text-sm text-silver">
+  <h2 className="text-xl font-semibold mb-2 text-darkred">Order Summary</h2>
+  <p className="text-sm text-darkred">{theatre.name} • {new Date(show.time).toLocaleString()} • {show.speciality}</p>
+  <div className="mt-4 space-y-1 text-sm text-black">
           {/* Seats summary */}
           <div>Seats: <strong>{seats.join(', ')}</strong> × ₹{show.price}</div>
           <div className="mt-2">
@@ -116,23 +116,23 @@ function Checkout() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {/* List all snacks with size and quantity controls */}
               {SNACKS.map(s => (
-                <div key={s.id} className="border border-yellow rounded-2xl p-2 bg-matte flex items-center gap-3">
+                <div key={s.id} className="border border-darkred rounded-2xl p-2 flex items-center gap-3">
                   {/* Snack image */}
                   {s.name === 'Popcorn' && <img src="/Popcorn.png" alt="Popcorn" className="w-10 h-10 object-contain" />}
                   {s.name === 'Nachos' && <img src="/nachos.png" alt="Nachos" className="w-10 h-10 object-contain" />}
                   {s.name === 'Coke' && <img src="/soda.png" alt="Coke" className="w-10 h-10 object-contain" />}
                   {s.name === 'Water' && <img src="/water.png" alt="Water" className="w-10 h-10 object-contain" />}
                   <div className="flex-1">
-                    <span className="text-yellow font-semibold">{s.name}</span>
+                    <span className="text-darkred font-semibold">{s.name}</span>
                     <div className="flex flex-col gap-1 mt-2">
                       {s.sizes.map(sz => (
                         <div key={sz.size} className="flex items-center justify-between">
-                          <span className="text-xs text-silver">{sz.size} - ₹{sz.price}</span>
+                          <span className="text-xs text-black">{sz.size} - ₹{sz.price}</span>
                           <div className="flex items-center gap-2">
                             {/* Quantity controls for each snack size */}
-                            <button className="w-7 h-7 rounded-full bg-yellow text-matte font-bold" onClick={()=>changeSnack(s.id, sz.size, (snacks[`${s.id}_${sz.size}`]||0)-1)}>-</button>
-                            <span className="w-5 text-center text-yellow">{snacks[`${s.id}_${sz.size}`]||0}</span>
-                            <button className="w-7 h-7 rounded-full bg-yellow text-matte font-bold" onClick={()=>changeSnack(s.id, sz.size, (snacks[`${s.id}_${sz.size}`]||0)+1)}>+</button>
+                            <button className="w-7 h-7 rounded-full text-darkred font-bold" onClick={()=>changeSnack(s.id, sz.size, (snacks[`${s.id}_${sz.size}`]||0)-1)}>-</button>
+                            <span className="w-5 text-center text-darkred">{snacks[`${s.id}_${sz.size}`]||0}</span>
+                            <button className="w-7 h-7 rounded-full text-darkred font-bold" onClick={()=>changeSnack(s.id, sz.size, (snacks[`${s.id}_${sz.size}`]||0)+1)}>+</button>
                           </div>
                         </div>
                       ))}
@@ -144,12 +144,12 @@ function Checkout() {
           </div>
           {/* Coupon input */}
           <div className="mt-4">
-            <label className="text-sm block mb-1 text-silver">Coupon code</label>
-            <input className="h-10 border border-yellow rounded-2xl px-3 bg-matte text-silver placeholder-yellow/60" value={coupon} onChange={e=>setCoupon(e.target.value)} placeholder="CINE10" />
+            <label className="text-sm block mb-1 text-black">Coupon code</label>
+            <input className="h-10 border border-darkred rounded-2xl px-3 text-black placeholder-darkred/60" value={coupon} onChange={e=>setCoupon(e.target.value)} placeholder="CINE10" />
           </div>
           {/* Payment method selection */}
           <div className="mt-4">
-            <label className="text-sm block mb-1 text-silver">Payment method</label>
+            <label className="text-sm block mb-1 text-black">Payment method</label>
             <div className="flex flex-wrap gap-3">
               {[
                 { value: 'card', label: 'Credit / Debit Card' },
@@ -160,7 +160,7 @@ function Checkout() {
               ].map(opt => (
                 <button
                   key={opt.value}
-                  className={`px-4 py-2 rounded-2xl border border-yellow font-semibold transition-all duration-150 ease-in-out ${method===opt.value ? 'bg-yellow text-matte' : 'bg-matte text-silver'}`}
+                  className={`px-4 py-2 rounded-2xl border border-darkred font-semibold transition-all duration-150 ease-in-out`}
                   onClick={()=>setMethod(opt.value)}
                   type="button"
                 >
@@ -174,20 +174,20 @@ function Checkout() {
           {method === 'card' && (
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-sm text-silver">Card Number</label>
-                <input className="w-full h-10 border border-yellow rounded-2xl px-3 bg-matte text-silver placeholder-yellow/60" maxLength={19} placeholder="1234 5678 9012 3456" value={cardDetails.number} onChange={e=>setCardDetails(d=>({...d,number:e.target.value}))} />
+                <label className="text-sm text-black">Card Number</label>
+                <input className="w-full h-10 border border-darkred rounded-2xl px-3 text-black placeholder-darkred/60" maxLength={19} placeholder="1234 5678 9012 3456" value={cardDetails.number} onChange={e=>setCardDetails(d=>({...d,number:e.target.value}))} />
               </div>
               <div>
-                <label className="text-sm text-silver">Name on Card</label>
-                <input className="w-full h-10 border border-yellow rounded-2xl px-3 bg-matte text-silver placeholder-yellow/60" placeholder="Name" value={cardDetails.name} onChange={e=>setCardDetails(d=>({...d,name:e.target.value}))} />
+                <label className="text-sm text-black">Name on Card</label>
+                <input className="w-full h-10 border border-darkred rounded-2xl px-3 text-black placeholder-darkred/60" placeholder="Name" value={cardDetails.name} onChange={e=>setCardDetails(d=>({...d,name:e.target.value}))} />
               </div>
               <div>
                 <label className="text-sm text-silver">Expiry</label>
-                <input className="w-full h-10 border border-yellow rounded-2xl px-3 bg-matte text-silver placeholder-yellow/60" maxLength={5} placeholder="MM/YY" value={cardDetails.expiry} onChange={e=>setCardDetails(d=>({...d,expiry:e.target.value}))} />
+                <input className="w-full h-10 border border-yellow rounded-2xl px-3 text-silver placeholder-yellow/60" maxLength={5} placeholder="MM/YY" value={cardDetails.expiry} onChange={e=>setCardDetails(d=>({...d,expiry:e.target.value}))} />
               </div>
               <div>
                 <label className="text-sm text-silver">CVV</label>
-                <input className="w-full h-10 border border-yellow rounded-2xl px-3 bg-matte text-silver placeholder-yellow/60" maxLength={4} placeholder="CVV" value={cardDetails.cvv} onChange={e=>setCardDetails(d=>({...d,cvv:e.target.value}))} />
+                <input className="w-full h-10 border border-yellow rounded-2xl px-3 text-silver placeholder-yellow/60" maxLength={4} placeholder="CVV" value={cardDetails.cvv} onChange={e=>setCardDetails(d=>({...d,cvv:e.target.value}))} />
               </div>
             </div>
           )}
@@ -199,7 +199,7 @@ function Checkout() {
             <div className="flex justify-between font-semibold text-lg mt-1 text-night-700"><span>Total</span><span>₹{total}</span></div>
           </div>
           {/* Pay button */}
-          <Button className="w-full mt-4" onClick={pay}>Pay ₹{total}</Button>
+          <Button className="w-full mt-4 bg-darkred text-lightgrey font-bold text-lg py-3 rounded-xl shadow hover:bg-red transition" onClick={pay}>Pay ₹{total}</Button>
           <div className="mt-4 text-xs text-night-400">* Snack prices vary by size. Payment options are shown above. Card details required for card payments.</div>
         </div>
       </Card>
