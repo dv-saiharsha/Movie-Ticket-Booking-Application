@@ -46,14 +46,12 @@ import { movies } from '../data/movies';
 import MovieCard from '../components/MovieCard';
 import { Ticket } from 'lucide-react';
 
-function SignInInline({ onSwitch, onClose }: { onSwitch: () => void; onClose: () => void }) {
+export function SignInInline({ onSwitch, onClose, forceSignIn }: { onSwitch: () => void; onClose: () => void; forceSignIn?: boolean }) {
   const { setUser } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const nav = useNavigate();
-  const onSubmit = () => {
-
-  const nav = useNavigate();
+  // If forceSignIn is true, do not allow switching to sign-up
   const onSubmit = () => {
     try {
       const u = signIn(email, password);
@@ -63,8 +61,6 @@ function SignInInline({ onSwitch, onClose }: { onSwitch: () => void; onClose: ()
     } catch (e: any) {
       alert(e.message);
     }
-
-  }
   };
   return (
     <Card className="w-full max-w-md p-8 shadow-xl rounded-2xl bg-white flex flex-col items-center">
@@ -101,7 +97,9 @@ function SignInInline({ onSwitch, onClose }: { onSwitch: () => void; onClose: ()
           </button>
         </div>
       </div>
-      <p className="text-sm text-center text-gray-600 mt-4">New user? <button className="text-brand-700 underline font-medium" onClick={onSwitch}>Create account</button></p>
+      {forceSignIn ? null : (
+        <p className="text-sm text-center text-gray-600 mt-4">New user? <button className="text-brand-700 underline font-medium" onClick={onSwitch}>Create account</button></p>
+      )}
       <Button variant="ghost" className="w-full mt-2" onClick={onClose}>Close</Button>
     </Card>
   );
@@ -197,22 +195,17 @@ function Home() {
 
   if (!user) {
     return (
-      <div className="min-h-screen w-full flex flex-col justify-between">
-        <main className="flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto px-6 py-16 gap-10 flex-1">
-          {/* Left: Sign in/up layout */}
-          <div className="flex-1 flex flex-col items-center justify-center max-w-xl">
-            <h1 className="text-5xl md:text-6xl font-serif font-extrabold leading-tight text-darkred mb-6 text-center">The Art<br />of Booking</h1>
-            {showSignIn ? (
-              <SignInInline onSwitch={() => setShowSignIn(false)} onClose={() => {}} />
-            ) : (
-              <SignUpInline onSwitch={() => setShowSignIn(true)} onClose={() => {}} />
-            )}
-          </div>
-          {/* Right: Carousel */}
-          <div className="flex-1 flex items-center justify-center">
-            <ImageCarousel />
-          </div>
-        </main>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-full max-w-md mx-auto p-8">
+          <h2 className="text-lg font-semibold mb-2 text-gray-700 text-center">CineBook</h2>
+          <h1 className="text-3xl font-bold mb-2 text-center">{showSignIn ? 'Login' : 'Sign Up'}</h1>
+          <p className="text-gray-500 mb-6 text-center">{showSignIn ? 'Welcome Back! Please enter your details.' : 'Create your account to get started.'}</p>
+          {showSignIn ? (
+            <SignInInline onSwitch={() => setShowSignIn(false)} onClose={() => {}} />
+          ) : (
+            <SignUpInline onSwitch={() => setShowSignIn(true)} onClose={() => {}} />
+          )}
+        </div>
       </div>
     );
 // ...existing code...
@@ -220,43 +213,39 @@ function Home() {
 
   // If logged in, show the original home page with movies
   return (
-  <div className="min-h-screen w-full flex flex-col justify-between">
-      <main className="flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto px-6 py-16 gap-10 flex-1">
-        {/* Left: Text content */}
-        <div className="flex-1 flex flex-col items-start justify-center max-w-xl">
-          <h1 className="text-5xl md:text-6xl font-serif font-extrabold leading-tight text-darkred mb-6">The Art<br />of Booking</h1>
-          <p className="mb-8 text-lg text-black">Book your next movie experience with ease. Discover, select, and reserve your seat in seconds. Enjoy the show!</p>
-          <div className="flex gap-4 mb-10">
-            <Button
-              className="px-8 py-3 rounded-lg font-bold text-lg shadow bg-darkred text-lightgrey hover:bg-red transition"
-              onClick={() => {
-                if (nowShowingRef.current) {
-                  const y = nowShowingRef.current.getBoundingClientRect().top + window.scrollY - 80;
-                  window.scrollTo({ top: y, behavior: 'smooth' });
+    <>
+      <div className="min-h-screen w-full flex flex-col justify-between">
+        <main className="flex flex-col-reverse md:flex-row items-center justify-between max-w-7xl mx-auto px-6 py-16 gap-10 flex-1">
+          {/* Left: Text content */}
+          <div className="flex-1 flex flex-col items-start justify-center max-w-xl">
+            <h1 className="text-5xl md:text-6xl font-serif font-extrabold leading-tight text-darkred mb-6">The Art<br />of Booking</h1>
+            <p className="mb-8 text-lg text-black">Book your next movie experience with ease. Discover, select, and reserve your seat in seconds. Enjoy the show!</p>
+            <div className="flex gap-4 mb-10">
+              <Button
+                className="px-8 py-3 rounded-lg font-bold text-lg shadow bg-darkred text-lightgrey hover:bg-red transition"
+                onClick={() => {
+                  if (nowShowingRef.current) {
+                    const y = nowShowingRef.current.getBoundingClientRect().top + window.scrollY - 80;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                  }
+                }}
+              >
+                Book Now
+              </Button>
+              <Button variant="outline" className="px-8 py-3 rounded-lg font-bold text-lg flex items-center gap-2" onClick={() => {
+                const el = document.getElementById('events-section');
+                if (el) {
+                  // ...existing code...
                 }
-              }}
-            >
-              Book Now
-            </Button>
-            <Button variant="outline" className="px-8 py-3 rounded-lg font-bold text-lg flex items-center gap-2" onClick={() => {
-              const el = document.getElementById('events-section');
-              if (el) {
-                const y = el.getBoundingClientRect().top + window.scrollY - 80;
-                window.scrollTo({ top: y, behavior: 'smooth' });
-              }
-            }}>
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M8 7v6l5 3" /></svg>
-              Events
-            </Button>
+              }}>
+                Events
+              </Button>
+            </div>
           </div>
-        </div>
-        {/* Right: Illustration image */}
-        <div className="flex-1 flex items-center justify-center">
-          <ImageCarousel />
-        </div>
-      </main>
-      {/* Movie Sections */}
-      <section ref={nowShowingRef} className="max-w-7xl mx-auto w-full px-6 pb-16">
+        </main>
+        {/* Movie Sections */}
+    <section ref={nowShowingRef} className="max-w-7xl mx-auto w-full px-6 pb-16">
+    {/* ...existing code... */}
   <h2 className="text-2xl font-bold text-darkred mb-4">Now Showing</h2>
         {/* List now showing movies */}
         <div className="flex gap-6 overflow-x-auto pb-2 scrollbar-hide">
@@ -432,6 +421,8 @@ function Home() {
   <div className="text-xs text-black mt-2">Developed by Venkata Sai Harshith Danda</div>
       </footer>
     </div>
+  );
+    </>
   );
 }
 export default Home;

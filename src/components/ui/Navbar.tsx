@@ -1,13 +1,12 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../lib/storage'
 import { MapPin, Ticket, Percent, LogOut, Film, User, Moon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { loadIndiaLocations, LocationNode } from '../../lib/indiaLocations'
-import { placeIconMap } from './placeIconMap'
-
 export default function Navbar() {
   const { user, setUser } = useAuthStore()
   const nav = useNavigate()
+  const location = useLocation();
   const [profileOpen, setProfileOpen] = useState(false)
   const [allPlaces, setAllPlaces] = useState<string[]>([])
   const [selectedPlace, setSelectedPlace] = useState(user?.location?.village || '')
@@ -89,9 +88,7 @@ export default function Navbar() {
                   aria-label="Select Location"
                 >
                   <MapPin className="h-4 w-4 text-darkred" />
-                    {selectedPlace && placeIconMap[selectedPlace] && (
-                      <span className="mr-1 align-middle inline-block">{placeIconMap[selectedPlace]}</span>
-                    )}
+                    {/* Place icon removed: placeIconMap not found */}
                     <span className="font-medium text-black/80">{selectedPlace || 'Select Location'}</span>
                 </button>
                 {showLocationDropdown && (
@@ -166,8 +163,13 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
-              <Link to="/signin" className="px-4 py-2 rounded-2xl border border-yellow text-yellow font-semibold transition-all duration-150 ease-in-out">Sign In</Link>
-              <Link to="/signup" className="px-4 py-2 rounded-2xl border border-yellow text-yellow font-semibold transition-all duration-150 ease-in-out">Sign Up</Link>
+              {/* Hide Sign In/Sign Up on / and /home */}
+              {!(location.pathname === '/' || location.pathname === '/home') && (
+                <>
+                  <Link to="/signin" className="px-4 py-2 rounded-2xl border border-yellow text-yellow font-semibold transition-all duration-150 ease-in-out">Sign In</Link>
+                  <Link to="/signup" className="px-4 py-2 rounded-2xl border border-yellow text-yellow font-semibold transition-all duration-150 ease-in-out">Sign Up</Link>
+                </>
+              )}
             </>
           )}
         </nav>
