@@ -2,6 +2,7 @@
 // SignUp page: Handles user registration and location selection
 
 import { useState, useEffect } from 'react'
+import { Film } from 'lucide-react';
 import Card from '../../components/ui/Card'
 import Label from '../../components/ui/Label'
 import Input from '../../components/ui/Input'
@@ -10,6 +11,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { signUp, useAuthStore, saveUserLocation } from '../../lib/storage'
 import { loadIndiaLocations, LocationNode } from '../../lib/indiaLocations'
 export default function SignUp() {
+  const [error, setError] = useState<string | null>(null)
   const nav = useNavigate() // Navigation hook
   const { setUser } = useAuthStore() // Auth state
   // State for form fields
@@ -33,13 +35,18 @@ export default function SignUp() {
 
   // Handle sign up form submit
   const onSubmit = () => {
+    setError(null)
+    if (!name || !email || !password || !state || !district || !village) {
+      setError('Please fill in all fields.');
+      return;
+    }
     try {
       const user = signUp({ name, email, password, location: { state, district, village } })
       setUser(user)
       saveUserLocation({ state, district, village })
-      nav('/home')
+  nav('/home')
     } catch(e:any) {
-      alert(e.message)
+      setError(e.message || 'Registration failed.');
     }
   }
 
@@ -47,7 +54,14 @@ export default function SignUp() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <Card className="w-full max-w-md p-6">
-        <h1 className="text-2xl font-semibold mb-4 text-center">Create your CineBook account</h1>
+        <div className="flex flex-col items-center mb-4">
+          <Film className="h-7 w-7 text-darkred mb-1" />
+          <h1 className="text-2xl font-semibold text-center">CineSphere</h1>
+          <p className="text-center text-darkred text-xs mt-1">A complete world of cinema.</p>
+        </div>
+        {error && (
+          <div className="w-full mb-2 text-center text-sm text-red-600 bg-red-100 rounded p-2">{error}</div>
+        )}
         <div className="space-y-3">
           <div>
             <Label htmlFor="name">Full name</Label>
@@ -90,7 +104,7 @@ export default function SignUp() {
             </div>
           </div>
 
-          <Button className="w-full" onClick={onSubmit}>Sign up</Button>
+          <Button className="w-full" onClick={onSubmit} disabled={!name || !email || !password || !state || !district || !village}>Sign up</Button>
           <p className="text-sm text-center text-gray-600">Already have an account? <Link className="text-brand-700" to="/signin">Sign in</Link></p>
         </div>
       </Card>

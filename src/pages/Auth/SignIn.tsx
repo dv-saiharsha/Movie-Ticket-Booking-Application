@@ -2,6 +2,7 @@
 // SignIn page: Handles user login
 
 import { useEffect, useState } from 'react'
+import { Film } from 'lucide-react';
 import Card from '../../components/ui/Card'
 import Label from '../../components/ui/Label'
 import Input from '../../components/ui/Input'
@@ -35,7 +36,11 @@ export default function SignIn() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <Card className="w-full max-w-md p-6">
-        <h1 className="text-2xl font-semibold mb-4 text-center">Welcome to CineBook</h1>
+        <div className="flex flex-col items-center mb-4">
+          <Film className="h-7 w-7 text-darkred mb-1" />
+          <h1 className="text-2xl font-semibold text-center">CineSphere</h1>
+          <p className="text-center text-darkred text-xs mt-1">A complete world of cinema.</p>
+        </div>
         <div className="space-y-3">
           <div>
             <Label htmlFor="email">Email</Label>

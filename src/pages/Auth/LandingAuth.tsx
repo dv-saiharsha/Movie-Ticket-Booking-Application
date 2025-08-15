@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Film } from 'lucide-react';
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Card from "../../components/ui/Card";
@@ -25,12 +26,15 @@ export default function LandingAuth() {
         <div className="flex flex-col md:flex-row items-center gap-12 w-full max-w-5xl">
           {/* Art/Info */}
           <div className="flex-1 flex flex-col items-start gap-6">
-            <h1 className="text-4xl md:text-5xl font-extrabold leading-tight text-darkred transition-colors duration-150">
-              Book Your Movie Tickets Effortlessly
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-md">
-              Experience the art of booking with CineBook. Fast, secure, and seamless ticketing for all your favorite movies and theaters.
-            </p>
+            <div className="flex flex-col items-start mb-2">
+              <div className="flex items-center gap-2 mb-1">
+                <Film className="h-8 w-8 text-darkred" />
+                <span className="text-4xl md:text-5xl font-extrabold leading-tight text-darkred">CineSphere</span>
+              </div>
+              <span className="text-base text-darkred font-medium">A complete world of cinema.</span>
+            </div>
+            <h2 className="text-2xl font-bold leading-tight text-darkred transition-colors duration-150">Book Your Movie Tickets Effortlessly</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-md">Fast, secure, and seamless ticketing for all your favorite movies and theaters.</p>
             <Button
               className="mt-2 px-8 py-3 text-lg font-semibold rounded-full shadow-lg transition-transform duration-150 hover:scale-105"
               onClick={() => setModalOpen(true)}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FaGoogle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Film } from 'lucide-react';
+import { signUp, signIn, useAuthStore } from '../lib/storage';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,7 +10,9 @@ export default function AuthPage() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [remember, setRemember] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { setUser } = useAuthStore();
 
   return (
     <div className="min-h-screen flex">
@@ -25,11 +28,38 @@ export default function AuthPage() {
   <div className="flex flex-1 flex-col justify-center items-center bg-lightgrey px-6 py-12">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
           <h2 className="text-lg font-semibold mb-2 text-darkred flex items-center gap-2">
-            CineBook <Film className="inline h-6 w-6 text-darkred" />
+            <Film className="inline h-6 w-6 text-darkred" />
+            <span>CineSphere</span>
           </h2>
+          <p className="text-darkred text-xs mb-2">A complete world of cinema.</p>
+            <p className="text-darkred text-xs mb-2">A complete world of cinema.</p>
           <h1 className="text-3xl font-bold mb-2 text-black">{isLogin ? 'Login' : 'Sign Up'}</h1>
           <p className="text-gray-600 mb-6">{isLogin ? 'Welcome Back! Please enter your details.' : 'Create your account to get started.'}</p>
-          <form className="space-y-4" onSubmit={e => { e.preventDefault(); /* handle login/signup */ }}>
+          <form className="space-y-4" onSubmit={e => {
+            e.preventDefault();
+            setError(null);
+            if (isLogin) {
+              try {
+                const user = signIn(email, password);
+                setUser(user);
+                navigate('/home');
+              } catch (err: any) {
+                setError(err.message || 'Login failed.');
+              }
+            } else {
+              if (!name || !email || !password) {
+                setError('Please fill in all fields.');
+                return;
+              }
+              try {
+                const user = signUp({ name, email, password });
+                setUser(user);
+                navigate('/home');
+              } catch (err: any) {
+                setError(err.message || 'Registration failed.');
+              }
+            }
+          }}>
             {!isLogin && (
               <input
                 type="text"
@@ -66,6 +96,7 @@ export default function AuthPage() {
               </div>
             )}
             <button type="submit" className="w-full bg-darkred text-white py-3 rounded-md font-semibold mt-2 hover:bg-red transition">{isLogin ? 'Log in' : 'Register'}</button>
+            {error && <div className="w-full text-center text-sm text-red-600 bg-red-100 rounded p-2 mt-2">{error}</div>}
             <div className="flex items-center gap-2 my-4">
               <div className="flex-1 h-px bg-gray-300" />
               <span className="text-gray-400 text-xs">or</span>

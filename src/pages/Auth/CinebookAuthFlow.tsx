@@ -168,8 +168,10 @@ function AuthModal({ open, onOpenChange, defaultTab = "signin", onSuccess }: Aut
           </div>
           <div className="flex justify-between p-4 text-xs text-gray-400">
             <div className="flex items-center gap-2">
+              <Film className="h-5 w-5 text-darkred" />
+              <span className="font-semibold">CineSphere</span>
+              <span className="text-xs text-darkred ml-2">A complete world of cinema.</span>
               <Badge>v1</Badge>
-              Cinebook Authentication
             </div>
             <button className="underline" onClick={() => { clearAuthed(); }}>Reset auth</button>
           </div>
@@ -193,7 +195,7 @@ function Hero({ onBook }: { onBook: () => void }) {
           Book movie tickets in a <span className="text-fuchsia-300">click</span>
         </h1>
   <p className="mt-3 text-black/80">
-          Discover new releases, fan screenings and more — all in Cinebook.
+          Discover new releases, fan screenings and more — all in CineSphere.
         </p>
         <div className="mt-6 flex items-center justify-center gap-3">
           <Button size="lg" onClick={onBook} className="shadow-lg">

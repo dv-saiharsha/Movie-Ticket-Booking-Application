@@ -13,8 +13,10 @@ type AuthState = {
   setUser: (u: User | null) => void
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: JSON.parse(localStorage.getItem('cinebook:user') || 'null'),
+export const useAuthStore = create<AuthState>((set, get) => ({
+  get user() {
+    return JSON.parse(localStorage.getItem('cinebook:user') || 'null');
+  },
   setUser: (u) => {
     if (u) localStorage.setItem('cinebook:user', JSON.stringify(u))
     else localStorage.removeItem('cinebook:user')

@@ -63,9 +63,12 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 border-b border-darkred shadow-sm bg-lightgrey">
       <div className="container h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link to="/home" className="font-semibold text-lg flex items-center gap-2 text-darkred">
-            CineBook
-            <Film className="h-7 w-7 text-darkred" />
+          <Link to="/home" className="flex flex-col items-start justify-center text-darkred">
+            <div className="flex items-center gap-2">
+              <Film className="h-7 w-7 text-darkred" />
+              <span className="font-semibold text-lg">CineSphere</span>
+            </div>
+            <span className="text-xs font-medium mt-0.5">A complete world of cinema.</span>
           </Link>
           {/* Theme toggle icon button */}
           <button

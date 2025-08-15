@@ -9,6 +9,7 @@ type EventModalType = {
   timings: string[];
 };
 import React from 'react';
+import { Film } from 'lucide-react';
 // Carousel component for hero section images
 function ImageCarousel() {
   const images = [
@@ -64,7 +65,11 @@ export function SignInInline({ onSwitch, onClose, forceSignIn }: { onSwitch: () 
   };
   return (
     <Card className="w-full max-w-md p-8 shadow-xl rounded-2xl bg-white flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-6 text-center text-darkred">Welcome to CineBook</h1>
+      <div className="flex flex-col items-center mb-6">
+        <Film className="h-8 w-8 text-darkred mb-1" />
+        <h1 className="text-3xl font-bold text-center text-darkred">CineSphere</h1>
+  <p className="text-center text-darkred text-sm mt-1">A complete world of cinema.</p>
+      </div>
       <form className="w-full flex flex-col gap-5" onSubmit={e => { e.preventDefault(); onSubmit(); }}>
         <div className="flex flex-col gap-1">
           <Label htmlFor="email">Email</Label>
@@ -123,7 +128,8 @@ function SignUpInline({ onSwitch, onClose }: { onSwitch: () => void; onClose: ()
   };
   return (
     <Card className="w-full max-w-md p-8 shadow-xl rounded-2xl bg-white flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-6 text-center text-darkred">Create your CineBook account</h1>
+  <h1 className="text-3xl font-bold mb-6 text-center text-darkred">Create your CineSphere account</h1>
+  <p className="text-center text-darkred text-sm mb-4">A complete world of cinema.</p>
   <form className="w-full flex flex-col gap-5" onSubmit={e => { e.preventDefault(); onSubmit(); }}>
         <div className="flex flex-col gap-1">
           <Label htmlFor="name">Full Name</Label>
@@ -179,7 +185,14 @@ function getNextFiveOddDays() {
 }
 
 function Home() {
-  const { user } = useAuthStore();
+  const { user, setUser } = useAuthStore();
+  // Rehydrate Zustand user state from localStorage if missing
+  React.useEffect(() => {
+    if (!user) {
+      const stored = localStorage.getItem('cinebook:user');
+      if (stored) setUser(JSON.parse(stored));
+    }
+  }, [user, setUser]);
   const [modalOpen, setModalOpen] = useState(false);
   const [showSignIn, setShowSignIn] = useState(true);
   const nowShowingRef = useRef<HTMLDivElement>(null);
@@ -197,7 +210,7 @@ function Home() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="w-full max-w-md mx-auto p-8">
-          <h2 className="text-lg font-semibold mb-2 text-gray-700 text-center">CineBook</h2>
+          <h2 className="text-lg font-semibold mb-2 text-gray-700 text-center">CineSphere</h2>
           <h1 className="text-3xl font-bold mb-2 text-center">{showSignIn ? 'Login' : 'Sign Up'}</h1>
           <p className="text-gray-500 mb-6 text-center">{showSignIn ? 'Welcome Back! Please enter your details.' : 'Create your account to get started.'}</p>
           {showSignIn ? (

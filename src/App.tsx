@@ -10,8 +10,18 @@ import Offers from './pages/Offers'
 import MyTickets from './pages/MyTickets'
 import Navbar from './components/ui/Navbar'
 import HomeRouteWrapper from './pages/HomeRouteWrapper';
+import { useEffect } from 'react';
+import { useAuthStore } from './lib/storage';
 
 export default function App() {
+  // Global Zustand hydration from localStorage
+  const { user, setUser } = useAuthStore();
+  useEffect(() => {
+    if (!user) {
+      const stored = localStorage.getItem('cinebook:user');
+      if (stored) setUser(JSON.parse(stored));
+    }
+  }, [user, setUser]);
   return (
     <div className="min-h-screen bg-lightgrey text-black transition-all duration-150 ease-in-out will-change-transform">
       <Navbar />
