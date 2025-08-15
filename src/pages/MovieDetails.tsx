@@ -13,6 +13,8 @@ export default function MovieDetails() {
   const [movie, setMovie] = useState<any>(null)
   // State for shows for this movie and date
   const [activeShows, setActiveShows] = useState<any[]>([])
+  // Loading state for showtimes
+  const [loading, setLoading] = useState(true)
   // State for selected date (default: today)
   const [selectedDate, setSelectedDate] = useState(() => {
     const d = new Date()
@@ -30,6 +32,7 @@ export default function MovieDetails() {
 
   // Simulate loading (network or computation)
   useEffect(() => {
+    setLoading(true)
     setTimeout(() => {
       // Find movie by ID
       const m = movies.find(m => m.id === id)
@@ -42,6 +45,7 @@ export default function MovieDetails() {
         return showDate.toISOString().slice(0,10) === selectedDate
       })
       setActiveShows(filteredShows)
+      setLoading(false)
     }, 600) // Simulate 600ms network delay
   }, [id, selectedDate])
 
@@ -82,14 +86,22 @@ export default function MovieDetails() {
         <div className="space-y-3">
           <h2 className="text-xl font-semibold text-darkred">Select Theatre & Showtime</h2>
           {/* List all theatres with shows for this movie and date */}
-          {theatres.map(t => {
-            const tShows = activeShows.filter(s => s.theatreId === t.id)
-            if (!tShows.length) return null
-            return <TheatreCard key={t.id} theatre={t} shows={tShows} />
-          })}
-          {/* Show message if no shows available */}
-          {activeShows.length === 0 && (
-            <div className="text-black text-center py-8 text-lg">No shows for this movie on the selected date.</div>
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <span className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-darkred"></span>
+            </div>
+          ) : (
+            <>
+              {theatres.map(t => {
+                const tShows = activeShows.filter(s => s.theatreId === t.id)
+                if (!tShows.length) return null
+                return <TheatreCard key={t.id} theatre={t} shows={tShows} />
+              })}
+              {/* Show message if no shows available */}
+              {activeShows.length === 0 && !loading && (
+                <div className="text-black text-center py-8 text-lg">No shows for this movie on the selected date.</div>
+              )}
+            </>
           )}
         </div>
       </div>

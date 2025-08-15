@@ -32,7 +32,6 @@ export default function AuthPage() {
             <span>CineSphere</span>
           </h2>
           <p className="text-darkred text-xs mb-2">A complete world of cinema.</p>
-            <p className="text-darkred text-xs mb-2">A complete world of cinema.</p>
           <h1 className="text-3xl font-bold mb-2 text-black">{isLogin ? 'Login' : 'Sign Up'}</h1>
           <p className="text-gray-600 mb-6">{isLogin ? 'Welcome Back! Please enter your details.' : 'Create your account to get started.'}</p>
           <form className="space-y-4" onSubmit={e => {

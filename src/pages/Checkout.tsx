@@ -39,10 +39,21 @@ function Checkout() {
   const nav = useNavigate() // Navigation hook
   const { showId } = useParams() // Get show ID from URL
   // Find the show and theatre details
-  const show = shows.find(s => s.id === showId)!
-  const theatre = theatres.find(t => t.id === show.theatreId)!
+  const show = shows.find(s => s.id === showId);
+  const theatre = show ? theatres.find(t => t.id === show.theatreId) : null;
   // State for selected seats
   const [seats, setSeats] = useState<string[]>([])
+
+  // If show or theatre is missing, show error and link home
+  if (!show || !theatre) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-lightgrey text-darkred">
+        <h1 className="text-2xl font-bold mb-4">Invalid or expired booking session</h1>
+        <p className="mb-4">We couldn't find your show or theatre details. Please start your booking again.</p>
+        <a href="/" className="px-6 py-3 bg-darkred text-white rounded-xl font-semibold shadow hover:bg-red transition">Go to Home</a>
+      </div>
+    );
+  }
   // State for snacks: { [snackId_size]: qty }
   const [snacks, setSnacks] = useState<Record<string, number>>({})
   // State for coupon code
@@ -51,6 +62,16 @@ function Checkout() {
   const [method, setMethod] = useState('card')
   // State for card details
   const [cardDetails, setCardDetails] = useState({ number: '', name: '', expiry: '', cvv: '' })
+  // Card brand detection
+  const getCardBrand = (number: string) => {
+    const n = number.replace(/\D/g, '');
+    if (/^4/.test(n)) return 'Visa';
+    if (/^5[1-5]/.test(n)) return 'MasterCard';
+    if (/^3[47]/.test(n)) return 'Amex';
+    if (/^6/.test(n)) return 'Discover';
+    return '';
+  };
+  const cardBrand = method === 'apple' ? 'Apple Card' : getCardBrand(cardDetails.number);
 
   // On mount, load selected seats from sessionStorage or redirect if not found
   useEffect(() => {
@@ -83,9 +104,14 @@ function Checkout() {
     setSnacks(prev => ({ ...prev, [`${id}_${size}`]: Math.max(0, qty) }))
   }
 
+  // Payment animation state
+  const [paying, setPaying] = useState(false);
+  const [paid, setPaid] = useState(false);
   // Simulate payment and save booking to localStorage
   const pay = async () => {
+    setPaying(true);
     setTimeout(() => {
+      setPaid(true);
       // Simulate payment success
       const booking = {
         id: crypto.randomUUID(),
@@ -98,8 +124,12 @@ function Checkout() {
       const list = JSON.parse(localStorage.getItem('cinebook:bookings') || '[]')
       list.push(booking)
       localStorage.setItem('cinebook:bookings', JSON.stringify(list))
-      nav(`/ticket/${booking.id}`)
-    }, 800)
+      setTimeout(() => {
+        setPaying(false);
+        setPaid(false);
+        nav(`/ticket/${booking.id}`)
+      }, 2000);
+    }, 900);
   }
 
   // Render checkout UI
@@ -152,30 +182,42 @@ function Checkout() {
             <label className="text-sm block mb-1 text-black">Payment method</label>
             <div className="flex flex-wrap gap-3">
               {[
-                { value: 'card', label: 'Credit / Debit Card' },
-                { value: 'upi', label: 'UPI' },
-                { value: 'paypal', label: 'PayPal' },
-                { value: 'apple', label: 'Apple Pay' },
-                { value: 'google', label: 'Google Pay' },
+                { value: 'card', label: 'Credit / Debit Card', icons: ["/credit-card.gif"] },
+                { value: 'upi', label: 'UPI', icons: ["/cashless-payment.png"] },
+                { value: 'paypal', label: 'PayPal', icons: ["/paypal.png"] },
+                { value: 'apple', label: 'Apple Pay', icons: ["/apple-pay.png"] },
+                { value: 'google', label: 'Google Pay', icons: ["/google-pay.png"] },
               ].map(opt => (
                 <button
                   key={opt.value}
-                  className={`px-4 py-2 rounded-2xl border border-darkred font-semibold transition-all duration-150 ease-in-out`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-2xl border border-darkred font-semibold transition-all duration-150 ease-in-out ${method === opt.value ? 'bg-darkred text-white' : ''}`}
                   onClick={()=>setMethod(opt.value)}
                   type="button"
                 >
                   {opt.label}
+                  {opt.icons && opt.icons.map((icon, i) => (
+                    <img key={icon} src={icon} alt={opt.label + ' icon'} className="w-7 h-7 object-contain ml-2" />
+                  ))}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Card details fields if card selected */}
-          {method === 'card' && (
+          {/* Card details fields for all payment modes except UPI/Google Pay */}
+          {(method === 'card' || method === 'apple' || method === 'paypal') && (
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-sm text-black">Card Number</label>
-                <input className="w-full h-10 border border-darkred rounded-2xl px-3 text-black placeholder-darkred/60" maxLength={19} placeholder="1234 5678 9012 3456" value={cardDetails.number} onChange={e=>setCardDetails(d=>({...d,number:e.target.value}))} />
+                <label className="text-sm text-black">Card Number {cardBrand && <span className="ml-2 text-xs text-darkred font-bold">({cardBrand === 'Apple Card' ? 'Apple Card' : cardBrand})</span>}</label>
+                <div className="relative">
+                  <input className="w-full h-10 border border-darkred rounded-2xl px-3 pr-20 text-black placeholder-darkred/60" maxLength={19} placeholder="1234 5678 9012 3456" value={cardDetails.number} onChange={e=>setCardDetails(d=>({...d,number:e.target.value}))} />
+                  {(method === 'card' || method === 'apple') && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 flex gap-1">
+                      <img src="/amex.png" alt="Amex" className="w-7 h-7 object-contain" />
+                      <img src="/business.png" alt="Business" className="w-7 h-7 object-contain" />
+                      <img src="/visa.png" alt="Visa" className="w-7 h-7 object-contain" />
+                    </span>
+                  )}
+                </div>
               </div>
               <div>
                 <label className="text-sm text-black">Name on Card</label>
@@ -191,6 +233,13 @@ function Checkout() {
               </div>
             </div>
           )}
+          {/* For other payment methods, prompt for required details */}
+          {(method === 'upi' || method === 'paypal' || method === 'google') && (
+            <div className="mt-4">
+              <label className="text-sm text-black">Enter {method === 'upi' ? 'UPI ID' : method === 'paypal' ? 'PayPal Email' : 'Google Pay Number'}</label>
+              <input className="w-full h-10 border border-darkred rounded-2xl px-3 text-black placeholder-darkred/60" placeholder={method === 'upi' ? 'yourname@upi' : method === 'paypal' ? 'email@example.com' : '9876543210'} />
+            </div>
+          )}
           {/* Order summary */}
           <div className="mt-4 border-t border-night-700 pt-4">
             <div className="flex justify-between"><span className="text-night-700">Subtotal</span><span className="text-night-700">₹{subtotal}</span></div>
@@ -198,8 +247,23 @@ function Checkout() {
             <div className="flex justify-between"><span className="text-night-700">Tax (18%)</span><span className="text-night-700">₹{tax}</span></div>
             <div className="flex justify-between font-semibold text-lg mt-1 text-night-700"><span>Total</span><span>₹{total}</span></div>
           </div>
-          {/* Pay button */}
-          <Button className="w-full mt-4 bg-darkred text-lightgrey font-bold text-lg py-3 rounded-xl shadow hover:bg-red transition" onClick={pay}>Pay ₹{total}</Button>
+          {/* Pay button with green fill and checkmark on success */}
+          <button
+            className={`w-full mt-4 font-bold text-lg py-3 rounded-xl shadow transition relative flex items-center justify-center
+              ${paid ? 'bg-green-600 text-white' : paying ? 'bg-green-500 text-white' : 'bg-darkred text-lightgrey hover:bg-red'}`}
+            onClick={pay}
+            disabled={paying || paid}
+            style={{ cursor: paying || paid ? 'wait' : 'pointer', minHeight: 56 }}
+          >
+            {paid ? (
+              <span className="flex items-center justify-center w-full animate-fade-in">
+                <img src="/checkmark.png" alt="Success" className="w-8 h-8 mr-2" />
+                Payment Successful
+              </span>
+            ) : (
+              <span className={paying ? 'opacity-70' : ''}>Pay ₹{total}</span>
+            )}
+          </button>
           <div className="mt-4 text-xs text-night-400">* Snack prices vary by size. Payment options are shown above. Card details required for card payments.</div>
         </div>
       </Card>
