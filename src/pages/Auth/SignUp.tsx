@@ -51,7 +51,7 @@ export default function SignUp() {
         <div className="space-y-3">
           <div>
             <Label htmlFor="name">Full name</Label>
-            <Input id="name" value={name} onChange={e=>setName(e.target.value)} placeholder="Bhavya Sree" />
+            <Input id="name" value={name} onChange={e=>setName(e.target.value)} placeholder="Full Name" />
           </div>
           <div>
             <Label htmlFor="email">Email</Label>

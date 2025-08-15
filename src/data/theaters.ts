@@ -13,7 +13,7 @@ export type Theatre = {
   id: string
   name: string
   location: { state: string; district?: string; village?: string }
-  layouts: Record<string, { rows: number; cols: number; aisles?: number[]; blocked?: string[] }>
+  layouts: Record<string, { rows: number; cols: number; aisles?: number[]; blocked?: string[]; wheelchair?: string[] }>
   tags: string[]
 }
 
@@ -23,7 +23,7 @@ export const theatres: Theatre[] = [
     name: 'Regal Cinemas - Agali',
     location: { state: 'Andhra Pradesh', district: 'Anantapur', village: 'Agali' },
     layouts: {
-      'L6': { rows: 8, cols: 10, aisles: [5], blocked: [] },
+  'L6': { rows: 12, cols: 10, aisles: [5], blocked: [], wheelchair: ['E6','E7','E8','E9','E10','E11'] },
     },
     tags: ['4K']
   },
@@ -32,7 +32,7 @@ export const theatres: Theatre[] = [
     name: 'Cityplex - Anakapalle',
     location: { state: 'Andhra Pradesh', district: 'Visakhapatnam', village: 'Anakapalle' },
     layouts: {
-      'L7': { rows: 10, cols: 12, aisles: [6], blocked: [] },
+  'L7': { rows: 14, cols: 12, aisles: [6], blocked: [], wheelchair: ['E6','E7','E8','E9','E10','E11'] },
     },
     tags: ['Dolby Atmos']
   },
@@ -41,8 +41,8 @@ export const theatres: Theatre[] = [
     name: 'CineGalaxy - Hitech',
     location: { state: 'Karnataka', district: 'Bengaluru Urban', village: 'Yelahanka' },
     layouts: {
-      'L1': { rows: 10, cols: 16, aisles: [8], blocked: [] },
-      'L2': { rows: 12, cols: 20, aisles: [10], blocked: ['A1','A2','A3'] },
+  'L1': { rows: 14, cols: 16, aisles: [8], blocked: [], wheelchair: ['E6','E7','E8','E9','E10','E11'] },
+  'L2': { rows: 16, cols: 20, aisles: [10], blocked: ['A1','A2','A3'], wheelchair: ['E6','E7','E8','E9','E10','E11'] },
     },
     tags: ['Dolby Atmos','4K']
   },
@@ -51,7 +51,7 @@ export const theatres: Theatre[] = [
     name: 'MegaPlex - Vizag',
     location: { state: 'Andhra Pradesh', district: 'Visakhapatnam', village: 'Bheemunipatnam' },
     layouts: {
-      'L3': { rows: 8, cols: 14, aisles: [7], blocked: ['H13','H14'] },
+  'L3': { rows: 12, cols: 14, aisles: [7], blocked: [], wheelchair: ['E6','E7','E8','E9','E10','E11'] },
     },
     tags: ['IMAX','EPIQ']
   },
@@ -60,7 +60,7 @@ export const theatres: Theatre[] = [
     name: 'Star Cinemas - Anantapur',
     location: { state: 'Andhra Pradesh', district: 'Anantapur', village: 'Amarapuram' },
     layouts: {
-      'L4': { rows: 9, cols: 12, aisles: [6], blocked: [] },
+  'L4': { rows: 13, cols: 12, aisles: [6], blocked: [], wheelchair: ['E6','E7','E8','E9','E10','E11'] },
     },
     tags: ['4K']
   },
@@ -69,7 +69,7 @@ export const theatres: Theatre[] = [
     name: 'Skyline Movies - Jakkur',
     location: { state: 'Karnataka', district: 'Bengaluru Urban', village: 'Jakkur' },
     layouts: {
-      'L5': { rows: 7, cols: 10, aisles: [5], blocked: [] },
+  'L5': { rows: 11, cols: 10, aisles: [5], blocked: [], wheelchair: ['E6','E7','E8','E9','E10','E11'] },
     },
     tags: ['Dolby Atmos']
   }
@@ -98,6 +98,10 @@ theatres.forEach(theatre => {
         date.setHours(Math.floor(hour), hour % 1 ? 59 : 0, 0, 0);
         const speciality = specialities[(idx + layoutIds.length) % specialities.length] as Show['speciality'];
         const price = 180 + (idx * 15) + (layoutIds.length * 5);
+        // Book all seats in rows C, F, and G for the current layout
+        const layout = theatre.layouts[layoutIds[idx % layoutIds.length]];
+  const booked: string[] = [];
+  // All seats are free to book
         shows.push({
           id: `sh${showId++}`,
           movieId: movie.id,
@@ -106,7 +110,7 @@ theatres.forEach(theatre => {
           speciality,
           price,
           layoutId: layoutIds[idx % layoutIds.length],
-          booked: [],
+          booked,
         });
       });
     }

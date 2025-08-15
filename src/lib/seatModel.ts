@@ -4,9 +4,10 @@ export type Seat = {
   col: number
   isBooked?: boolean
   isBlocked?: boolean
+  isWheelchair?: boolean
 }
 
-export type Layout = { rows: number; cols: number; aisles?: number[]; blocked?: string[] }
+export type Layout = { rows: number; cols: number; aisles?: number[]; blocked?: string[]; wheelchair?: string[] }
 
 const weights = {
   centerRow: 1.8,
@@ -71,25 +72,35 @@ export function suggestSeats(layout: Layout, booked: string[], count: number) {
       const id = `${String.fromCharCode(65 + r)}${c+1}`
       const isBooked = bookedSet.has(id)
       const isBlocked = (layout.blocked || []).includes(id)
-      grid.push({ id, row: r, col: c, isBooked, isBlocked })
+      const isWheelchair = (layout.wheelchair || []).includes(id)
+      grid.push({ id, row: r, col: c, isBooked, isBlocked, isWheelchair })
     }
   }
 
-  // try contiguous window in a row
-  let bestRun: { ids: string[]; score: number } | null = null
+  // collect all valid contiguous seat runs
+  const validRuns: { ids: string[]; score: number }[] = []
   for (let r = 0; r < layout.rows; r++) {
     for (let start = 0; start <= layout.cols - count; start++) {
       const segment = grid.filter(g => g.row === r && g.col >= start && g.col < start + count)
       if (segment.some(s => s.isBooked || s.isBlocked)) continue
       const segScore = segment.reduce((acc, s) => acc + scoreSeat(s, layout, bookedSet), 0)
-      if (!bestRun || segScore > bestRun.score) bestRun = { ids: segment.map(s => s.id), score: segScore }
+      validRuns.push({ ids: segment.map(s => s.id), score: segScore })
     }
   }
-
-  // fallback to best individual seats if no contiguous block
-  if (!bestRun) {
-    const freeSeats = grid.filter(s => !s.isBooked && !s.isBlocked).sort((a,b) => scoreSeat(b, layout, new Set(booked)) - scoreSeat(a, layout, new Set(booked)))
-    return freeSeats.slice(0, count).map(s => s.id)
+  if (validRuns.length > 0) {
+    // Shuffle valid runs and pick one randomly
+    for (let i = validRuns.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [validRuns[i], validRuns[j]] = [validRuns[j], validRuns[i]];
+    }
+    return validRuns[0].ids;
   }
-  return bestRun.ids
+  // fallback to best individual seats if no contiguous block
+  const freeSeats = grid.filter(s => !s.isBooked && !s.isBlocked)
+  // shuffle free seats
+  for (let i = freeSeats.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [freeSeats[i], freeSeats[j]] = [freeSeats[j], freeSeats[i]];
+  }
+  return freeSeats.slice(0, count).map(s => s.id)
 }

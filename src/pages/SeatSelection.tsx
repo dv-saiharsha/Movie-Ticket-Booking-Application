@@ -32,16 +32,36 @@ export default function SeatSelection() {
 
   // Build seat grid with booked/blocked info
   const seatGrid = useMemo(() => {
-    const rows = Array.from({ length: layout.rows }, (_, r) => String.fromCharCode(65 + r))
-    const cols = Array.from({ length: layout.cols }, (_, c) => c + 1)
+    // Add a dedicated accessible row between premium and premium economy
+    const totalRows = layout.rows + 1;
+    const cols = Array.from({ length: layout.cols }, (_, c) => c + 1);
+    // Build row labels (A, B, ..., N, O for accessible row)
+    const baseRows = Array.from({ length: layout.rows }, (_, r) => String.fromCharCode(65 + r)).reverse();
+    const accessibleRowLabel = String.fromCharCode(65 + layout.rows); // e.g., 'O' if 14 rows
+    // Section counts
+    const economyRows = 3;
+    const premiumRows = 4;
+    const accessibleRowIdx = economyRows + premiumRows;
+    // Insert accessible row label at correct position
+    const rows = [...baseRows];
+    rows.splice(accessibleRowIdx, 0, accessibleRowLabel);
     const bookedSet = new Set(show.booked)
     const blockedSet = new Set(layout.blocked || [])
-    return rows.map(r => cols.map(c => {
-      const id = `${r}${c}`
-      const isBooked = bookedSet.has(id)
-      const isBlocked = blockedSet.has(id)
-      return { id, isBooked, isBlocked }
-    }))
+    const wheelchairSet = new Set(layout.wheelchair || [])
+    return rows.map((r, rowIdx) => {
+      let seatType: 'economy'|'premium'|'accessible'|'premium-economy';
+      if (rowIdx < economyRows) seatType = 'economy';
+      else if (rowIdx < economyRows + premiumRows) seatType = 'premium';
+      else if (rowIdx === accessibleRowIdx) seatType = 'accessible';
+      else seatType = 'premium-economy';
+      return cols.map(c => {
+        const id = `${r}${c}`
+        const isBooked = bookedSet.has(id)
+        const isBlocked = blockedSet.has(id)
+        const isWheelchair = seatType === 'accessible' ? true : wheelchairSet.has(id)
+        return { id, isBooked, isBlocked, isWheelchair, seatType }
+      })
+    })
   }, [layout, show])
 
   // Suggest best seats using heuristic
@@ -130,33 +150,64 @@ export default function SeatSelection() {
         <ScreenArc />
         <div className="w-full flex flex-col items-center">
           <div className="text-green text-base font-semibold mb-2">Screen this way</div>
-          <div className="inline-block p-2 rounded-2xl">
+          <div className="inline-block p-2 rounded-2xl w-full">
             {/* Render seat grid */}
-            {seatGrid.map((row, i) => {
-              // Center each row by adding left margin based on the difference between max and current row length
-              const maxCols = layout.cols;
-              const rowLength = row.length;
-              const seatSize = 28; // w-6 + m-0.5 (24px + 4px)
-              const totalWidth = maxCols * seatSize;
-              const rowWidth = rowLength * seatSize;
-              const marginLeft = (totalWidth - rowWidth) / 2;
-              return (
-                <div key={i} className="flex items-center justify-center">
-                  {/* Row label */}
-                  <span className="w-6 text-xs font-bold text-darkred drop-shadow">{String.fromCharCode(65+i)}</span>
-                  <div className="flex" style={{ marginLeft }}>
-                    {row.map(c => {
-                      const state = c.isBlocked ? 'blocked'
-                        : c.isBooked ? 'booked'
-                        : selected.includes(c.id) ? 'selected'
-                        : suggested.includes(c.id) ? 'suggested'
-                        : 'free'
-                      return <Seat key={c.id} id={c.id} state={state as any} onClick={() => toggleSeat(c.id)} />
-                    })}
+            {(() => {
+              const economyRows = 3;
+              const premiumRows = 4;
+              const accessibleRowIdx = economyRows + premiumRows;
+              const sectionBoundaries = [0, economyRows, economyRows + premiumRows, economyRows + premiumRows + 1];
+              const sectionNames = [
+                { name: 'Economy', color: 'bg-yellow-400' },
+                { name: 'Premium', color: 'bg-purple-500' },
+                { name: 'Accessible', color: 'bg-blue-500' },
+                { name: 'Premium Economy', color: 'bg-green-500' }
+              ];
+              let sectionIdx = 0;
+              let content: JSX.Element[] = [];
+              for (let i = 0; i < seatGrid.length; i++) {
+                // Insert a spacer row and section label before the first row of each section
+                if (sectionBoundaries.includes(i)) {
+                  const idx = sectionBoundaries.indexOf(i);
+                  content.push(
+                    <div key={`section-space-${idx}`} className="flex items-center justify-center my-2">
+                      <span className="w-6" />
+                      <div className="flex-1 flex justify-center">
+                        <span className="flex items-center gap-2 px-4 py-1 rounded bg-gray-50 border text-xs font-bold shadow-sm"
+                          style={{ color: sectionNames[idx].color.replace('bg-', 'text-'), borderColor: sectionNames[idx].color.replace('bg-', 'border-') }}>
+                          <span className={`inline-block w-3 h-3 rounded-full ${sectionNames[idx].color}`}></span>
+                          {sectionNames[idx].name}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                }
+                const row = seatGrid[i];
+                const maxCols = layout.cols;
+                const rowLength = row.length;
+                const seatSize = 28;
+                const totalWidth = maxCols * seatSize;
+                const rowWidth = rowLength * seatSize;
+                const marginLeft = (totalWidth - rowWidth) / 2;
+                const rowLabel = seatGrid[i][0].id.replace(/\d+$/, '');
+                content.push(
+                  <div key={i} className="flex items-center justify-center">
+                    <span className="w-6 text-xs font-bold text-darkred drop-shadow">{rowLabel}</span>
+                    <div className="flex items-center" style={{ marginLeft }}>
+                      {row.map(c => {
+                        const state = c.isBlocked ? 'blocked'
+                          : c.isBooked ? 'booked'
+                          : selected.includes(c.id) ? 'selected'
+                          : suggested.includes(c.id) ? 'suggested'
+                          : 'free'
+                        return <Seat key={c.id} id={c.id} state={state as any} isWheelchair={c.isWheelchair} seatType={c.seatType} onClick={() => toggleSeat(c.id)} />
+                      })}
+                    </div>
                   </div>
-                </div>
-              )
-            })}
+                );
+              }
+              return content;
+            })()}
           </div>
           {/* Reset and Continue buttons */}
           {selected.length > 0 && (
@@ -166,11 +217,19 @@ export default function SeatSelection() {
             </div>
           )}
         </div>
-        <div className="mt-4 flex gap-4 text-sm">
-          <div className="flex items-center gap-1"><span className="w-4 h-4 inline-block rounded-sm bg-error" />Booked</div>
-          <div className="flex items-center gap-1"><span className="w-4 h-4 inline-block rounded-sm bg-lightgrey border-2 border-darkred" />Suggested</div>
-          <div className="flex items-center gap-1"><span className="w-4 h-4 inline-block rounded-sm bg-darkred border-2 border-black" />Selected</div>
-          <div className="flex items-center gap-1"><span className="w-4 h-4 border border-black bg-lightgrey inline-block rounded-sm" />Free</div>
+        <div className="mt-4 flex flex-wrap items-center justify-between w-full text-sm">
+          <div className="flex gap-4 items-center">
+            <div className="flex items-center gap-1"><span className="w-4 h-4 inline-block rounded-sm bg-error" />Booked</div>
+            <div className="flex items-center gap-1"><span className="w-4 h-4 inline-block rounded-sm bg-lightgrey border-2 border-darkred" />Suggested</div>
+            <div className="flex items-center gap-1"><span className="w-4 h-4 inline-block rounded-sm bg-darkred border-2 border-black" />Selected</div>
+            <div className="flex items-center gap-1"><span className="w-4 h-4 border border-black bg-lightgrey inline-block rounded-sm" />Free</div>
+          </div>
+          <div className="flex gap-4 items-center">
+            <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-300 flex items-center"><span className="inline-block w-3 h-3 rounded-sm ring-2 ring-yellow-400 bg-gray-200 mr-1"></span>Economy</span>
+            <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-300 flex items-center"><span className="inline-block w-3 h-3 rounded-sm ring-2 ring-purple-500 bg-gray-200 mr-1"></span>Premium</span>
+            <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-300 flex items-center"><span className="inline-block w-3 h-3 rounded-sm ring-2 ring-green-500 bg-gray-200 mr-1"></span>Premium Economy</span>
+            <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-300 flex items-center"><span className="inline-block w-3 h-3 rounded-sm ring-2 ring-blue-500 bg-gray-200 mr-1"></span>Accessible</span>
+          </div>
         </div>
       </Card>
   <footer className="w-full text-center py-4 text-xs text-black">Developed by Venkata Sai Harshith Danda</footer>

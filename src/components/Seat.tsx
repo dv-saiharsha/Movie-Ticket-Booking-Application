@@ -1,16 +1,26 @@
+import { FaWheelchair } from 'react-icons/fa';
 type Props = {
   id: string
   state: 'booked'|'suggested'|'selected'|'free'|'blocked'
+  isWheelchair?: boolean
+  seatType?: 'economy'|'premium'|'premium-economy'|'accessible'
   onClick?: () => void
 }
 
-export default function Seat({ id, state, onClick }: Props) {
+export default function Seat({ id, state, isWheelchair, seatType, onClick }: Props) {
 
   // Color logic: selected=black, booked=red, suggested=lightgrey with darkred border, free=lightgrey with black border
   let color = ''
   let textColor = 'text-lightgrey'
   let border = ''
   let hover = ''
+  // Add seat type color overlay
+  let seatTypeBg = '';
+  if (seatType === 'premium') seatTypeBg = 'ring-2 ring-purple-500';
+  else if (seatType === 'premium-economy') seatTypeBg = 'ring-2 ring-green-500';
+  else if (seatType === 'economy') seatTypeBg = 'ring-2 ring-yellow-400';
+  else if (seatType === 'accessible') seatTypeBg = 'ring-2 ring-blue-500';
+
   switch (state) {
     case 'booked':
       color = 'bg-red';
@@ -48,11 +58,12 @@ export default function Seat({ id, state, onClick }: Props) {
   return (
     <button
       onClick={onClick}
-      className={`w-6 h-6 m-0.5 rounded-sm ${color} ${border} ${hover} ${textColor} text-[10px] flex items-center justify-center transition-all duration-200 ease-in-out transform ${animate}`}
+      className={`w-6 h-6 m-0.5 rounded-sm ${color} ${border} ${hover} ${textColor} text-[10px] flex items-center justify-center transition-all duration-200 ease-in-out transform ${animate} ${seatTypeBg}`}
       disabled={state === 'booked' || state === 'blocked'}
       style={{ cursor: (state === 'booked' || state === 'blocked') ? 'not-allowed' : 'pointer' }}
+      aria-label={isWheelchair ? 'Wheelchair Accessible Seat' : undefined}
     >
-      {id.replace(/\D/g, '')}
+      {isWheelchair ? <FaWheelchair className="text-blue-700 text-base" /> : id.replace(/\D/g, '')}
     </button>
   )
 }
