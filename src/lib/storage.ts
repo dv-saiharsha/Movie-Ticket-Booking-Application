@@ -1,11 +1,11 @@
 import { create } from 'zustand'
 
-type User = {
+export type User = {
   id: string
   name: string
   email: string
-  password: string // demo only (do NOT use in prod)
   location?: { state: string; district?: string; village?: string }
+  username?: string
 }
 
 type AuthState = {
@@ -13,15 +13,9 @@ type AuthState = {
   setUser: (u: User | null) => void
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
-  get user() {
-    return JSON.parse(localStorage.getItem('cinebook:user') || 'null');
-  },
-  setUser: (u) => {
-    if (u) localStorage.setItem('cinebook:user', JSON.stringify(u))
-    else localStorage.removeItem('cinebook:user')
-    set({ user: u })
-  },
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  setUser: (u) => set({ user: u })
 }))
 
 export function useAuth() {
@@ -29,41 +23,48 @@ export function useAuth() {
   return { user }
 }
 
-export function signUp(u: Omit<User, 'id'>) {
-  const users: User[] = JSON.parse(localStorage.getItem('cinebook:users') || '[]')
-  if (users.find((x) => x.email === u.email)) {
-    throw new Error('Email already registered')
+// Backend API base URL
+const API = '/api/auth';
+
+export async function signUp(u: { name: string; email: string; password: string; location: { state: string; district?: string; village?: string } }) {
+  const res = await fetch(`${API}/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      username: u.email, // use email as username for now
+      name: u.name,
+      email: u.email,
+      password: u.password,
+      location: u.location
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Registration failed');
   }
-  const user: User = { ...u, id: crypto.randomUUID() }
-  users.push(user)
-  localStorage.setItem('cinebook:users', JSON.stringify(users))
-  localStorage.setItem('cinebook:user', JSON.stringify(user))
-  return user
+  const data = await res.json();
+  return data.user;
 }
 
-export function signIn(email: string, password: string) {
-  const users: User[] = JSON.parse(localStorage.getItem('cinebook:users') || '[]')
-  const user = users.find((x) => x.email === email && x.password === password)
-  if (!user) throw new Error('Invalid credentials')
-  localStorage.setItem('cinebook:user', JSON.stringify(user))
-  return user
+export async function signIn(email: string, password: string) {
+  const res = await fetch(`${API}/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: email, password })
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Invalid credentials');
+  }
+  const data = await res.json();
+  return data.user;
 }
 
 export function signOut() {
-  localStorage.removeItem('cinebook:user')
+  useAuthStore.getState().setUser(null);
 }
 
 export function saveUserLocation(loc: { state: string; district?: string; village?: string }) {
-  const userRaw = localStorage.getItem('cinebook:user')
-  if (!userRaw) return
-  const user = JSON.parse(userRaw)
-  user.location = loc
-  localStorage.setItem('cinebook:user', JSON.stringify(user))
-
-  const users: User[] = JSON.parse(localStorage.getItem('cinebook:users') || '[]')
-  const idx = users.findIndex((x) => x.id === user.id)
-  if (idx !== -1) {
-    users[idx] = user
-    localStorage.setItem('cinebook:users', JSON.stringify(users))
-  }
+  // Optionally, implement a backend call to update user location
 }
+

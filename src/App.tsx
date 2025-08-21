@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import AuthPage from './pages/AuthPage'
+// import Landing from './pages/Landing'
 import Home from './pages/Home'
 import Events from './pages/Events'
 import MovieDetails from './pages/MovieDetails'
@@ -14,19 +15,12 @@ import { useEffect } from 'react';
 import { useAuthStore } from './lib/storage';
 
 export default function App() {
-  // Global Zustand hydration from localStorage
-  const { user, setUser } = useAuthStore();
-  useEffect(() => {
-    if (!user) {
-      const stored = localStorage.getItem('cinebook:user');
-      if (stored) setUser(JSON.parse(stored));
-    }
-  }, [user, setUser]);
   return (
     <div className="min-h-screen bg-lightgrey text-black transition-all duration-150 ease-in-out will-change-transform">
       <Navbar />
       <Routes>
-        <Route path="/" element={<AuthPage />} />
+        <Route path="/" element={<HomeRouteWrapper />} />
+        <Route path="/auth" element={<AuthPage />} />
         <Route path="/home" element={<HomeRouteWrapper />} />
         <Route path="/movie/:id" element={<MovieDetails />} />
         <Route path="/seat/:showId" element={<SeatSelection />} />

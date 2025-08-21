@@ -22,9 +22,9 @@ export default function SignIn() {
   }, [user])
 
   // Handle sign in form submit
-  const onSubmit = () => {
+  const onSubmit = async () => {
     try {
-      const u = signIn(email, password)
+      const u = await signIn(email, password)
       setUser(u)
       nav('/home')
     } catch(e:any) {

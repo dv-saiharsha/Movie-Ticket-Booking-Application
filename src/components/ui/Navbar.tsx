@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useAuthStore } from '../../lib/storage'
+import { useAuthStore, signOut } from '../../lib/storage'
 import { MapPin, Ticket, Percent, LogOut, Film, User, Moon, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { loadIndiaLocations, LocationNode } from '../../lib/indiaLocations'
@@ -131,7 +131,7 @@ export default function Navbar() {
                     </Link>
                     <button
                       className="w-full text-left px-4 py-2 text-silver flex items-center gap-2 transition"
-                      onClick={() => { setUser(null); nav('/home') }}
+                      onClick={() => { signOut(); nav('/home') }}
                     >
                       <LogOut className="h-4 w-4 text-yellow" /> Logout
                     </button>

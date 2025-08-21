@@ -34,17 +34,17 @@ export default function SignUp() {
   const districtNode = stateNode?.children?.find(d => d.name === district)
 
   // Handle sign up form submit
-  const onSubmit = () => {
+  const onSubmit = async () => {
     setError(null)
     if (!name || !email || !password || !state || !district || !village) {
       setError('Please fill in all fields.');
       return;
     }
     try {
-      const user = signUp({ name, email, password, location: { state, district, village } })
+      const user = await signUp({ name, email, password, location: { state, district, village } })
       setUser(user)
-      saveUserLocation({ state, district, village })
-  nav('/home')
+      // Optionally: saveUserLocation({ state, district, village })
+      nav('/home')
     } catch(e:any) {
       setError(e.message || 'Registration failed.');
     }
