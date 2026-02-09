@@ -10,7 +10,7 @@ export default function LoadingSpinner({ className = '' }: { className?: string 
         className="w-16 h-16 animate-spin"
         style={{ animationDuration: '1s', animationTimingFunction: 'linear', animationIterationCount: 'infinite' }}
       />
-      <span className="mt-2 text-silver text-sm">Loading...</span>
+      <span className="mt-2 text-gray-500 text-sm">Loading...</span>
     </div>
   )
 }

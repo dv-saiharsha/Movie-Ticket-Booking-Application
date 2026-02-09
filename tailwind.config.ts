@@ -8,32 +8,46 @@ export default {
     extend: {
       colors: {
         black: {
-          DEFAULT: '#1A1414', // Top stripe
+          DEFAULT: '#000000', 
+        },
+        // Midnight Purple & Neon Theme
+        figma: {
+            bg: '#0F0A1E',     // Deep Midnight Purple
+            card: '#1B1236',   // Lighter Violet Surface
+            accent: '#F72585', // Neon Pink
+            secondary: '#4CC9F0', // Neon Cyan
+            gold: '#FFD166',   // Bright Gold
+            text: '#F8F9FA',   // White-ish text
+            muted: '#9CA3AF',  // Gray text
+            red: '#EF476F',    // Vibrant Red/Pinkish
         },
         darkred: {
-          DEFAULT: '#8B1414', // Second stripe
+          DEFAULT: '#560BAD', // Re-purposing to Deep Purple for legacy components
         },
         red: {
-          DEFAULT: '#D94343', // Third stripe
+          DEFAULT: '#F72585', // Mapping Red to Neon Pink
         },
         lightgrey: {
-          DEFAULT: '#F2F2F2', // Bottom stripe
+          DEFAULT: '#F8F9FA', 
         },
         error: {
-          DEFAULT: '#8B1414',
+          DEFAULT: '#EF476F',
         },
         success: {
-          DEFAULT: '#16A6A6',
+          DEFAULT: '#06D6A0', // Neon Green
         },
         white: {
           DEFAULT: '#FFFFFF',
         },
       },
       boxShadow: {
-        'yellow': '0 2px 8px 0 rgba(254, 218, 106, 0.15)',
-        'matte': '0 2px 8px 0 rgba(57, 63, 77, 0.15)',
-        'slate': '0 2px 8px 0 rgba(29, 30, 34, 0.15)',
+        'glow': '0 0 20px rgba(247, 37, 133, 0.5)',
+        'neon': '0 0 10px rgba(76, 201, 240, 0.3)',
       },
+      backgroundImage: {
+        'neon-gradient': 'linear-gradient(to right, #4361ee, #4cc9f0)',
+        'purple-gradient': 'linear-gradient(to right, #7209b7, #f72585)',
+      }
     },
   },
 }

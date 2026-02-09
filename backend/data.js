@@ -26,7 +26,7 @@ export const theatres = [
 ];
 
 // Show generation logic
-import { movies } from '../src/data/movies.js';
+import { movies } from './movies.js';
 const majorTheatreIds = ['th7','th8','th9','th10','th13','th16','th17','th18'];
 const timeSlotsMajor = [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,23.983];
 const timeSlots = [9, 12, 15, 18, 21, 23.983];

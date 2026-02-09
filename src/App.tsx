@@ -16,7 +16,7 @@ import { useAuthStore } from './lib/storage';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-lightgrey text-black transition-all duration-150 ease-in-out will-change-transform">
+    <div className="min-h-screen bg-figma-bg text-figma-text transition-all duration-150 ease-in-out will-change-transform">
       <Navbar />
       <Routes>
         <Route path="/" element={<HomeRouteWrapper />} />

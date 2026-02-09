@@ -22,9 +22,11 @@ export default function MovieCard({ movie }: MovieCardProps) {
   // State for reminder button
   const [reminded, setReminded] = useState(false)
   return (
-  <div className="rounded-xl shadow-md overflow-hidden w-48 min-w-[12rem] flex flex-col border-2 border-darkred bg-white">
+  <div className="rounded-xl shadow-sm overflow-hidden w-48 min-w-[12rem] flex flex-col border border-gray-200 bg-white hover:shadow-lg transition-all duration-300 group">
       {/* Movie poster */}
-  <img src={movie.poster} alt={movie.title} className="h-64 object-cover w-full" />
+      <div className="relative overflow-hidden h-64">
+        <img src={movie.poster} alt={movie.title} className="h-full object-cover w-full group-hover:scale-105 transition-transform duration-500" />
+      </div>
       <div className="p-3 flex-1 flex flex-col justify-between">
         <div>
           {/* Movie title */}

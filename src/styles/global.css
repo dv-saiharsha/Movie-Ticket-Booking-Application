@@ -16,8 +16,8 @@ html, body, #root {
 }
 
 body {
-  color: #1A1414;
-  background-color: hsla(0, 0%, 95%, 0.204);
+  color: #F8F9FA;
+  background-color: #0F0A1E;
   min-height: 100vh;
   min-width: 100vw;
   width: 100vw;

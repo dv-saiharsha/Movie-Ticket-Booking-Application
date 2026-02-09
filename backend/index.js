@@ -100,7 +100,6 @@ import { theatres, shows } from './data.js';
 const bookings = [];
 
 // Persistent user storage
-import fs from 'fs';
 const USERS_FILE = './users.json';
 function loadUsers() {
   try {

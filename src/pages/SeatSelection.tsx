@@ -1,286 +1,269 @@
-import { useMemo, useState } from 'react';
-import { FaBicycle, FaMotorcycle, FaCar, FaShuttleVan, FaBus, FaUser } from 'react-icons/fa';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import Card from '../components/ui/Card';
+
+import { useMemo, useState, useEffect } from 'react';
+import { FaUser } from 'react-icons/fa';
+import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import Seat from '../components/Seat';
 import ScreenArc from '../components/ScreenArc';
 import { shows, theatres } from '../data/theaters';
+import { movies } from '../data/movies';
 import { suggestSeats } from '../lib/seatModel';
-import { SiDolby } from 'react-icons/si';
-import { Md4K } from 'react-icons/md';
 
 export default function SeatSelection() {
-  const icons = [FaUser, FaBicycle, FaMotorcycle, FaCar, FaShuttleVan, FaBus];
   const nav = useNavigate();
   const { showId } = useParams();
-  const location = useLocation();
-  const urlParams = new URLSearchParams(location.search);
-  const initialCount = parseInt(urlParams.get('count') || '1', 10);
-  const show = shows.find(s => s.id === showId)!;
-  let theatre = theatres.find(t => t.id === show.theatreId)!;
-  let layout = theatre.layouts[show.layoutId];
+  
+  const show = shows.find(s => s.id === showId);
+  const movie = show ? movies.find(m => m.id === show.movieId) : null;
+  const theatre = show ? theatres.find(t => t.id === show.theatreId) : null;
+  
+  const layout = useMemo(() => {
+    if (!show || !theatre) return null;
+    let l = theatre.layouts[show.layoutId];
+    
+    function getSortedLayouts() {
+        const allLayouts = theatres.flatMap(t => Object.entries(t.layouts).map(([lid, ly]) => ({
+          theatre: t,
+          layoutId: lid,
+          ...ly
+        })));
+        return allLayouts.sort((a, b) => (b.rows * b.cols) - (a.rows * a.cols));
+    }
 
-  function getSortedLayouts() {
-    const allLayouts = theatres.flatMap(t => Object.entries(t.layouts).map(([lid, l]) => ({
-      theatre: t,
-      layoutId: lid,
-      ...l
-    })));
-    return allLayouts.sort((a, b) => (b.rows * b.cols) - (a.rows * a.cols));
-  }
-  if (show.speciality === 'IMAX') {
-    const layouts = getSortedLayouts();
-    if (layouts.length) {
-      layout = { rows: layouts[0].rows, cols: layouts[0].cols, aisles: layouts[0].aisles, blocked: layouts[0].blocked, wheelchair: layouts[0].wheelchair };
-      theatre = layouts[0].theatre;
+    if (show.speciality === 'IMAX') {
+        const layouts = getSortedLayouts();
+        if (layouts.length) l = layouts[0];
+    } else if (show.speciality === 'Dolby Atmos') {
+        const layouts = getSortedLayouts();
+        if (layouts.length > 1) l = layouts[1];
+    } else if (show.speciality === '4K') {
+        const layouts = getSortedLayouts();
+        if (layouts.length > 2) l = layouts[Math.floor(layouts.length/2)];
     }
-  } else if (show.speciality === 'Dolby Atmos') {
-    const layouts = getSortedLayouts();
-    if (layouts.length > 1) {
-      layout = { rows: layouts[1].rows, cols: layouts[1].cols, aisles: layouts[1].aisles, blocked: layouts[1].blocked, wheelchair: layouts[1].wheelchair };
-      theatre = layouts[1].theatre;
-    }
-  } else if (show.speciality === '4K') {
-    const layouts = getSortedLayouts();
-    if (layouts.length > 2) {
-      const mid = Math.floor(layouts.length / 2);
-      layout = { rows: layouts[mid].rows, cols: layouts[mid].cols, aisles: layouts[mid].aisles, blocked: layouts[mid].blocked, wheelchair: layouts[mid].wheelchair };
-      theatre = layouts[mid].theatre;
-    }
-  }
-  const [count, setCount] = useState(initialCount);
+    return l;
+  }, [show, theatre]);
+
+  const [count, setCount] = useState(2);
   const [selected, setSelected] = useState<string[]>([]);
   const [suggested, setSuggested] = useState<string[]>([]);
   const [showCountModal, setShowCountModal] = useState(true);
   const [loading, setLoading] = useState(false);
 
+  // Use a default empty layout logic if show/theatre are missing to prevent Hook crashes
   const seatGrid = useMemo(() => {
+    if (!layout || !show) return [];
+
     const cols = Array.from({ length: layout.cols }, (_, c) => c + 1);
     const baseRows = Array.from({ length: layout.rows }, (_, r) => String.fromCharCode(65 + r)).reverse();
-    const economyRows = 3;
-    const premiumRows = 4;
+    
     const rows = [...baseRows];
     const bookedSet = new Set(show.booked);
     const blockedSet = new Set(layout.blocked || []);
+    
     return rows.map((r, rowIdx) => {
-      let seatType: 'economy'|'premium'|'premium-economy';
-      if (rowIdx < economyRows) seatType = 'economy';
-      else if (rowIdx < economyRows + premiumRows) seatType = 'premium';
-      else seatType = 'premium-economy';
+      // Visual Logic: Top 3 rows (back of hall) are premium, rest standard.
+      // Modified for visual variety if IMAX
+      let seatType: 'standard' | 'premium' | 's-class-teal' = (rowIdx < 3) ? 'premium' : 'standard';
+      if (show.speciality === 'IMAX' && rowIdx === rows.length - 1) seatType = 's-class-teal';
+
       return cols.map(c => {
         const id = `${r}${c}`;
         const isBooked = bookedSet.has(id);
         const isBlocked = blockedSet.has(id);
-        return { id, isBooked, isBlocked, seatType };
+        return { id, isBooked, isBlocked, seatType }; 
       });
     });
   }, [layout, show]);
 
   const onSuggest = () => {
+    if (!layout || !show) return;
     const ids = suggestSeats(layout, show.booked, count);
     setSuggested(ids);
     setSelected(ids);
   };
 
-  const toggleSeat = (id: string) => {
-    if (show.booked.includes(id)) return;
+  const toggleSeat = (id: string, isBooked: boolean, isBlocked: boolean) => {
+    if (isBooked || isBlocked) return;
     if (selected.includes(id)) {
       setSelected(prev => prev.filter(x => x !== id));
     } else {
-      if (selected.length >= count) return;
-      setSelected(prev => [...prev, id]);
+      if (selected.length >= count) {
+         // Auto-shift selection
+         const newSel = [...selected.slice(1), id];
+         setSelected(newSel);
+      } else {
+         setSelected(prev => [...prev, id]);
+      }
     }
   };
 
   const proceed = () => {
-    if (selected.length < count) {
-      alert('Please select all seats');
-      return;
-    }
+    if (selected.length === 0) return;
     setLoading(true);
     setTimeout(() => {
       sessionStorage.setItem('cinebook:checkout', JSON.stringify({ showId, seats: selected }));
       nav(`/checkout/${showId}`);
     }, 600);
   };
+  
+  if (!show || !theatre || !layout || !movie) return <div className="min-h-screen bg-figma-bg text-white flex items-center justify-center">Show not found</div>;
 
+  
   return (
-    <div className="container py-6 space-y-4 text-black bg-lightgrey ">
-      {/* Loading overlay */}
-      {loading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-          <span className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-darkred"></span>
-        </div>
-      )}
-      {/* Ticket count modal */}
-      {showCountModal && !loading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-md" onClick={() => {
-            setLoading(true);
-            setTimeout(() => {
-              setShowCountModal(false);
-              setLoading(false);
-            }, 600);
-          }}></div>
-          <div className="relative z-10 bg-lightgrey rounded-2xl shadow-2xl p-8 min-w-[380px] flex flex-col items-center border-2 border-darkred">
-            <h4 className="text-3xl font-extrabold text-black mb-4 tracking-wide">How many seats?</h4>
-            <div className="mb-4 flex items-center justify-center">
-              {(() => {
-                const Icon = icons[count-1] || FaUser;
-                return <Icon className="text-6xl text-darkred drop-shadow" />;
-              })()}
+    <div className="min-h-screen bg-figma-bg text-white font-sans selection:bg-figma-accent selection:text-white pb-32">
+        {/* Loading overlay */}
+        {loading && (
+            <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+            <span className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-figma-accent shadow-[0_0_20px_rgba(247,37,133,0.5)]"></span>
             </div>
-            <div className="flex gap-4 mb-6">
-              {[1,2,3,4,5,6].map(n => (
-                <button
-                  key={n}
-                  className={`w-10 h-10 flex items-center justify-center rounded-full text-lg font-bold border-2 transition-all duration-150 ${count===n ? 'bg-red text-white border-red shadow-lg scale-110' : 'bg-white text-black border-slate-300 hover:border-red'} focus:outline-none`}
-                  onClick={()=>setCount(n)}
-                  aria-label={`Select ${n} seats`}
+        )}
+
+        {/* Modal: How many seats? */}
+        {showCountModal && !loading && (
+            <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => {
+                setLoading(true);
+                setTimeout(() => { setShowCountModal(false); setLoading(false); }, 400);
+            }} />
+            
+            <div className="relative z-10 w-full md:w-auto bg-figma-card md:rounded-3xl rounded-t-3xl border md:border border-t border-white/20 shadow-[0_0_50px_rgba(247,37,133,0.2)] overflow-hidden animate-in slide-in-from-bottom-10 fade-in duration-300">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-figma-accent to-transparent opacity-100"></div>
+                <div className="p-8 flex flex-col items-center min-w-[340px]">
+                    <h2 className="text-xl font-bold text-white mb-8 tracking-wider">How many seats?</h2>
+                    
+                    <div className="relative mb-10 w-full mx-auto flex justify-center py-6">
+                         {/* Neon glow behind number */}
+                         <div className="absolute inset-0 bg-figma-accent/20 blur-xl rounded-full transform scale-75"></div>
+                        <div className="text-6xl text-figma-accent drop-shadow-[0_0_10px_rgba(247,37,133,0.8)] font-black relative z-10">
+                            {count}
+                        </div>
+                    </div>
+
+                    <div className="flex gap-2 mb-8 bg-white/5 p-1.5 rounded-full border border-white/10">
+                        {[1,2,3,4,5,6].map(n => (
+                            <button
+                            key={n}
+                            onClick={() => setCount(n)}
+                            className={`w-10 h-10 flex items-center justify-center rounded-full text-sm font-bold transition-all duration-300 ${
+                                count === n 
+                                ? 'bg-figma-accent text-white scale-110 shadow-[0_0_15px_rgba(247,37,133,0.6)]' 
+                                : 'text-gray-400 hover:text-white hover:bg-white/10'
+                            }`}
+                            >
+                            {n}
+                            </button>
+                        ))}
+                    </div>
+
+                    <Button 
+                        className="w-full bg-figma-accent text-white hover:bg-pink-600 font-bold h-12 text-lg shadow-[0_0_20px_rgba(247,37,133,0.4)] border border-white/10"
+                        onClick={() => {
+                            setLoading(true);
+                            setTimeout(() => { setShowCountModal(false); setLoading(false); onSuggest(); }, 400);
+                        }}
+                    >
+                        Select Seats
+                    </Button>
+                </div>
+            </div>
+            </div>
+        )}
+
+        {/* Header */}
+        <div className="sticky top-0 z-40 bg-figma-bg/80 backdrop-blur-md border-b border-white/10 shadow-lg shadow-purple-900/5">
+            <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl font-bold text-white flex items-center gap-2 tracking-wide">
+                        {movie.title}
+                        <span className="text-xs font-normal text-figma-accent border border-figma-accent/50 px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(247,37,133,0.3)]">
+                           {show.speciality || '2D'}
+                        </span>
+                    </h1>
+                    <p className="text-xs text-gray-400 mt-1">
+                        {theatre.name} • {new Date(show.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    </p>
+                </div>
+                <button 
+                    onClick={() => setShowCountModal(true)}
+                    className="text-sm px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 transition-colors text-white flex items-center gap-2"
                 >
-                  {n}
+                    {count} Seats <span className="text-figma-accent">▼</span>
                 </button>
-              ))}
             </div>
-            <Button onClick={() => {
-              setLoading(true);
-              setTimeout(()=>{
-                setShowCountModal(false);
-                setLoading(false);
-              }, 600);
-            }} className="w-full mt-2 bg-red text-white font-bold text-lg py-3 rounded-xl shadow hover:bg-darkred transition">Select Seats</Button>
-          </div>
         </div>
-      )}
-      {/* Main content only visible when modal is closed */}
-      {!showCountModal && !loading && (
-        <>
-          <Card>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <div>
-                <h2 className="text-xl font-semibold text-darkred">{theatre.name}</h2>
-                <p className="text-sm text-darkred flex items-center gap-1">
-                  {new Date(show.time).toLocaleString()} •
-                  {show.speciality === 'Dolby Atmos' && <SiDolby className="text-darkred text-base" title="Dolby Atmos" />}
-                  {show.speciality === '4K' && <Md4K className="text-darkred text-base" title="4K" />}
-                  {show.speciality} • ₹{show.price}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-black">Tickets: {count}</span>
-              </div>
-            </div>
-          </Card>
-          <Card>
+
+        {/* Info Legend */}
+        <div className="w-full bg-white/5 border-b border-white/10 py-2">
+             <div className="max-w-4xl mx-auto px-4 flex justify-center gap-6 text-[10px] uppercase tracking-wider text-gray-400 font-medium">
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full border border-gray-600 bg-figma-bg"></div> Available</div>
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-figma-accent shadow-[0_0_8px_rgba(247,37,133,0.8)]"></div> Selected</div>
+                  <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-gray-600/50"></div> Sold</div>
+             </div>
+        </div>
+
+        {/* Screen Area */}
+        <div className="max-w-5xl mx-auto px-4 pt-10 overflow-x-hidden">
             <ScreenArc />
-            <div className="w-full flex flex-col items-center">
-              <div className="text-green text-base font-semibold mb-2">Screen this way</div>
-              <div className="inline-block p-2 rounded-2xl w-full">
-                {/* Render seat grid */}
-                {(() => {
-                  const economyRows = 3;
-                  const premiumRows = 4;
-                  const sectionBoundaries = [0, economyRows, economyRows + premiumRows];
-                  const sectionNames = [
-                    { name: 'Economy', color: 'bg-yellow-400' },
-                    { name: 'Premium', color: 'bg-purple-500' },
-                    { name: 'Premium Economy', color: 'bg-green-500' }
-                  ];
-                  let content: JSX.Element[] = [];
-                  const isIMAX = show.speciality === 'IMAX';
-                  const totalRows = seatGrid.length;
-                  for (let i = 0; i < seatGrid.length; i++) {
-                    // S CLASS label in the same format as Premium Economy, above the S Class rows (last 3 rows)
-                    if (isIMAX && i === totalRows - 3) {
-                      content.push(
-                        <div key="imax-sclass-label-dot" className="flex items-center justify-center my-2">
-                          <span className="w-6" />
-                          <div className="flex-1 flex justify-center">
-                            <span className="flex items-center gap-2 px-4 py-1 rounded bg-gray-50 border text-xs font-bold shadow-sm text-teal-600 border-teal-400">
-                              <span className="inline-block w-3 h-3 rounded-full bg-teal-400"></span>
-                              S CLASS
-                            </span>
-                          </div>
+            
+            <div className="mt-12 w-full overflow-x-auto pb-12 scrollbar-thin scrollbar-thumb-figma-accent/30 scrollbar-track-transparent">
+                <div className="min-w-max mx-auto flex flex-col items-center gap-1.5">
+                    {seatGrid.map((row, rIdx) => (
+                        <div key={rIdx} className="flex flex-nowrap items-center gap-3 md:gap-4">
+                            <div className="w-4 text-[10px] font-bold text-gray-500 text-center uppercase">
+                                {row[0]?.id.replace(/[0-9]/g, '')}
+                            </div>
+                            <div className="flex gap-1 md:gap-1.5">
+                                {row.map(seat => {
+                                    let state: any = 'free';
+                                    if (seat.isBlocked) state = 'blocked';
+                                    else if (seat.isBooked) state = 'booked';
+                                    else if (selected.includes(seat.id)) state = 'selected';
+                                    
+                                    return (
+                                        <Seat 
+                                            key={seat.id}
+                                            id={seat.id}
+                                            state={state}
+                                            seatType={seat.seatType as any}
+                                            onClick={() => toggleSeat(seat.id, seat.isBooked, seat.isBlocked)}
+                                        />
+                                    );
+                                })}
+                            </div>
                         </div>
-                      );
-                    }
-                    // Section labels for all screens (except S CLASS, which is handled above)
-                    if (sectionBoundaries.includes(i) && !(isIMAX && i === totalRows - 3)) {
-                      const idx = sectionBoundaries.indexOf(i);
-                      content.push(
-                        <div key={`section-space-${idx}`} className="flex items-center justify-center my-2">
-                          <span className="w-6" />
-                          <div className="flex-1 flex justify-center">
-                            <span className="flex items-center gap-2 px-4 py-1 rounded bg-gray-50 border text-xs font-bold shadow-sm"
-                              style={{ color: sectionNames[idx].color.replace('bg-', 'text-'), borderColor: sectionNames[idx].color.replace('bg-', 'border-') }}>
-                              <span className={`inline-block w-3 h-3 rounded-full ${sectionNames[idx].color}`}></span>
-                              {sectionNames[idx].name}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    }
-                    const row = seatGrid[i];
-                    const maxCols = layout.cols;
-                    const rowLength = row.length;
-                    const seatSize = 28;
-                    const totalWidth = maxCols * seatSize;
-                    const rowWidth = rowLength * seatSize;
-                    const marginLeft = (totalWidth - rowWidth) / 2;
-                    const rowLabel = seatGrid[i][0].id.replace(/\d+$/, '');
-                    // Add a vertical gap after every row for all seat maps
-                    content.push(
-                      <div key={`gap-row-${i}`} className="h-3" />
-                    );
-                    // For IMAX, last 3 rows: use seatType='recliner' for pink S Class color
-                    const sClassRow = isIMAX && i >= totalRows - 3;
-                    content.push(
-                      <div key={i} className="flex items-center justify-center">
-                        <span className="w-6 text-xs font-bold text-darkred drop-shadow">{rowLabel}</span>
-                        <div className="flex items-center" style={{ marginLeft }}>
-                          {row.map(c => {
-                            const state = c.isBlocked ? 'blocked'
-                              : c.isBooked ? 'booked'
-                              : selected.includes(c.id) ? 'selected'
-                              : suggested.includes(c.id) ? 'suggested'
-                              : 'free';
-                            // For IMAX last 3 rows, pass seatType='recliner' to Seat, but with teal color
-                            return <Seat key={c.id} id={c.id} state={state as any} seatType={sClassRow ? 's-class-teal' : c.seatType} onClick={() => toggleSeat(c.id)} />;
-                          })}
-                        </div>
-                      </div>
-                    );
-                  }
-                  return content;
-                })()}
-              </div>
-              <div className="mt-6 flex w-full max-w-lg mx-auto justify-between items-center gap-2">
-                <Button onClick={() => setSelected([])} className="flex-1 bg-red text-white font-bold py-3 rounded-xl shadow hover:bg-darkred transition disabled:opacity-50" disabled={selected.length === 0}>Reset Seats</Button>
-                <Button onClick={onSuggest} className="flex-1 bg-yellow-400 text-darkred font-bold py-3 rounded-xl shadow hover:bg-yellow-500 transition border-2 border-darkred" variant="outline">Suggest Seats</Button>
-                <Button onClick={proceed} className="flex-1 bg-darkred text-lightgrey font-bold py-3 rounded-xl shadow hover:bg-red transition disabled:opacity-50" disabled={selected.length === 0}>Proceed</Button>
-              </div>
-              <div className="mt-4 flex flex-wrap items-center justify-between w-full text-sm">
-                <div className="flex gap-4 items-center">
-                  <div className="flex items-center gap-1"><span className="w-4 h-4 inline-block rounded-sm bg-error" />Booked</div>
-                  <div className="flex items-center gap-1"><span className="w-4 h-4 inline-block rounded-sm bg-lightgrey border-2 border-darkred" />Suggested</div>
-                  <div className="flex items-center gap-1"><span className="w-4 h-4 inline-block rounded-sm bg-darkred border-2 border-black" />Selected</div>
-                  <div className="flex items-center gap-1"><span className="w-4 h-4 border border-black bg-lightgrey inline-block rounded-sm" />Free</div>
+                    ))}
                 </div>
-                <div className="flex gap-4 items-center">
-                  <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-300 flex items-center"><span className="inline-block w-3 h-3 rounded-sm ring-2 ring-yellow-400 bg-gray-200 mr-1"></span>Economy</span>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-300 flex items-center"><span className="inline-block w-3 h-3 rounded-sm ring-2 ring-purple-500 bg-gray-200 mr-1"></span>Premium</span>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-300 flex items-center"><span className="inline-block w-3 h-3 rounded-sm ring-2 ring-green-500 bg-gray-200 mr-1"></span>Premium Economy</span>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800 border border-teal-400 flex items-center"><span className="inline-block w-3 h-3 rounded-sm ring-2 ring-teal-300 bg-gray-200 mr-1"></span>S CLASS</span>
-                </div>
-              </div>
             </div>
-          </Card>
-          <footer className="w-full text-center py-4 text-xs text-black">Developed by Venkata Sai Harshith Danda</footer>
-        </>
-      )}
+
+            {/* Catgegory Badge */}
+            <div className="mt-8 flex justify-center gap-4 flex-wrap pb-24">
+                 <div className="px-3 py-1 bg-white/5 rounded text-xs text-gray-400 border border-white/10">
+                    Standard <span className="text-white font-bold ml-1">₹{show.price}</span>
+                 </div>
+                 <div className="px-3 py-1 bg-white/5 rounded text-xs text-gray-400 border border-white/10">
+                    Premium <span className="text-white font-bold ml-1">₹{show.price + 100}</span>
+                 </div>
+            </div>
+        </div>
+
+        {/* Bottom Booking Bar */}
+        {selected.length > 0 && (
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-figma-card border-t border-white/10 p-4 safe-area-pb shadow-[0_-4px_30px_rgba(0,0,0,0.5)]">
+                <div className="max-w-4xl mx-auto flex items-center justify-between">
+                    <div>
+                        <div className="text-xs text-figma-accent font-medium mb-0.5 tracking-wider">PAYABLE AMOUNT</div>
+                        <div className="text-2xl font-bold text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">₹{selected.length * (show.price + 50)}</div>
+                    </div>
+                    <Button 
+                        size="lg" 
+                        onClick={proceed}
+                        className="bg-figma-accent text-white hover:bg-pink-600 shadow-[0_0_20px_rgba(247,37,133,0.5)] font-bold text-base px-10 rounded-xl border border-white/10"
+                    >
+                        Book {selected.length} Tickets
+                    </Button>
+                </div>
+            </div>
+        )}
     </div>
   );
 }
-
-

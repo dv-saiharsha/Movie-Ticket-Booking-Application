@@ -15,25 +15,25 @@ export default function AuthPage() {
   const { setUser } = useAuthStore();
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex text-gray-900">
       {/* Left: Branding/Art Section */}
-      <div className="hidden md:flex w-1/2 bg-gradient-to-br from-yellow-50 via-purple-50 to-green-50 flex-col justify-center items-center p-12">
+      <div className="hidden md:flex w-1/2 bg-gradient-to-br from-gray-50 via-white to-gray-100 flex-col justify-center items-center p-12">
         <div className="max-w-md text-center">
-          <h1 className="text-5xl font-extrabold font-serif text-darkred mb-4 drop-shadow-lg">The Art of Booking</h1>
-          <p className="text-lg text-gray-700 mb-8">Experience seamless ticket booking with innovation and style. Join our community and unlock exclusive offers!</p>
+          <h1 className="text-5xl font-extrabold font-serif text-figma-accent mb-4 drop-shadow-sm">The Art of Booking</h1>
+          <p className="text-lg text-gray-500 mb-8">Experience seamless ticket booking with innovation and style. Join our community and unlock exclusive offers!</p>
           {/* Badges removed as requested */}
         </div>
       </div>
       {/* Right: Auth Form */}
-  <div className="flex flex-1 flex-col justify-center items-center bg-lightgrey px-6 py-12">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-lg font-semibold mb-2 text-darkred flex items-center gap-2">
-            <Film className="inline h-6 w-6 text-darkred" />
+  <div className="flex flex-1 flex-col justify-center items-center bg-figma-bg px-6 py-12">
+        <div className="w-full max-w-md bg-white text-gray-900 rounded-2xl shadow-xl p-8 border border-gray-200">
+          <h2 className="text-lg font-semibold mb-2 text-figma-accent flex items-center gap-2">
+            <Film className="inline h-6 w-6 text-figma-accent" />
             <span>CineSphere</span>
           </h2>
-          <p className="text-darkred text-xs mb-2">A complete world of cinema.</p>
-          <h1 className="text-3xl font-bold mb-2 text-black">{isLogin ? 'Login' : 'Sign Up'}</h1>
-          <p className="text-gray-600 mb-6">{isLogin ? 'Welcome Back! Please enter your details.' : 'Create your account to get started.'}</p>
+          <p className="text-gray-500 text-xs mb-2">A complete world of cinema.</p>
+          <h1 className="text-3xl font-bold mb-2 text-gray-900">{isLogin ? 'Login' : 'Sign Up'}</h1>
+          <p className="text-gray-500 mb-6">{isLogin ? 'Welcome Back! Please enter your details.' : 'Create your account to get started.'}</p>
           <form className="space-y-4" onSubmit={e => {
             e.preventDefault();
             setError(null);
